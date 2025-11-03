@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Alumni - Manajemen Sistem Kesiswaan</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-color: #e0e5ec; /* Warna latar belakang utama untuk efek 3D */
+            --primary-blue: #007bff; /* Warna tombol/highlight default */
+            --dark-text: #343a40;
+            /* Bayangan untuk efek 3D menonjol */
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --protruding-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            --inset-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            --widget-radius: 18px; /* Sudut membulat yang lebih besar */
+        }
+
+        /* Reset dan Layout Dasar */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color); 
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: 80px; /* Memberi ruang untuk navbar fixed-top */
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: var(--bg-color) !important;
+            box-shadow: var(--protruding-shadow);
+            color: var(--dark-text);
+        }
+        .navbar-brand strong {
+            color: var(--dark-text);
+        }
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            box-shadow: var(--protruding-shadow);
+            object-fit: cover;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .navbar-toggler:hover, .navbar-toggler:focus {
+            box-shadow: var(--inset-shadow);
+            outline: none;
+        }
+
+        /* Offcanvas Menu Styling */
+        .offcanvas.offcanvas-end {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+        }
+        .offcanvas-header {
+            background-color: var(--bg-color); 
+            border-bottom: 1px solid var(--shadow-dark);
+            color: var(--dark-text);
+        }
+
+        .user-card {
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .user-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: var(--protruding-shadow);
+            padding: 5px;
+            background-color: var(--bg-color);
+        }
+
+        .user-card .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .user-card .btn, .user-card .btn-login {
+            box-shadow: var(--protruding-shadow);
+            border: none;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card .btn:hover, .user-card .btn-login:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .user-card #logout-button {
+            color: #dc3545;
+        }
+
+        .offcanvas-body .nav-link {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            padding-left: 1.5rem; /* DIGESER: Memberi jarak dari tepi kiri */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .offcanvas-body .nav-link i {
+            margin-right: 0.75rem; /* DIGESER: Jarak antara ikon dan teks */
+            width: 20px; /* Pastikan ikon punya lebar tetap agar rapi */
+            text-align: center;
+        }
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link:focus {
+            box-shadow: var(--inset-shadow);
+            transform: translateY(2px);
+        }
+        .offcanvas-body .nav-link.active {
+            color: var(--primary-blue); 
+            box-shadow: var(--inset-shadow);
+            font-weight: 600;
+        }
+
+        /* Footer Styling */
+        .footer {
+            padding: 2rem 0;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow); 
+        }
+        .footer-school-name, .footer-school-address {
+            color: var(--dark-text);
+        }
+        .footer .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            font-size: 1.4rem;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .footer .social-icons a:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Custom page styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+            margin-bottom: 2rem !important;
+            text-align: center;
+        }
+        .main-card {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--protruding-shadow);
+            padding: 1.5rem;
+        }
+        .main-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--shadow-dark);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .main-card .list-group-item {
+            background-color: transparent;
+            border-color: rgba(0,0,0,0.05);
+        }
+        .action-buttons .btn, .action-buttons .input-group .btn {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: box-shadow 0.2s ease;
+        }
+        .action-buttons .btn:hover, .action-buttons .input-group .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .action-buttons .btn-primary { color: var(--primary-blue); }
+        .action-buttons .btn-success { color: #198754; }
+        .action-buttons .form-control {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .action-buttons .form-control:focus {
+             box-shadow: var(--inset-shadow), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .table {
+            background-color: transparent;
+            font-size: 0.9rem;
+        }
+        .table thead th {
+            background-color: var(--bg-color);
+            text-align: center;
+            font-weight: 600;
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow);
+        }
+        .table td, .table th {
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+            padding: 0.75rem;
+        }
+
+        /* Modal Styles */
+        .modal-content { background-color: var(--bg-color); border: none; border-radius: var(--widget-radius); box-shadow: none; }
+        .modal-header, .modal-footer { background-color: var(--bg-color); border-color: var(--shadow-dark); }
+        .modal-body {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .modal-body .form-control, .modal-body .form-select { background-color: var(--bg-color); border: none; border-radius: 10px; box-shadow: var(--inset-shadow); color: var(--dark-text); }
+        .modal-footer .btn {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+        }
+        .modal-footer .btn:hover { box-shadow: var(--inset-shadow); }
+        .modal-footer .btn-primary { color: var(--primary-blue); }
+        .modal-footer .btn-warning { color: #ffc107; }
+        .modal-footer .btn-danger { color: #dc3545; }
+        #alumni-table-body .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        #alumni-table-body .btn-action:hover { box-shadow: var(--inset-shadow); }
+        #alumni-table-body .btn-edit { color: #ffc107; }
+        #alumni-table-body .btn-delete { color: #dc3545; }
+        #alumni-table-body .btn-view-file { color: var(--primary-blue); }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="logo.png" alt="Logo Sekolah" class="me-2">
+                    <strong>Manajemen Kesiswaan</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" title="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu Utama</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="user-card p-3 text-center">
+                <img id="user-avatar" src="logo.png" alt="Foto User">
+                <div id="user-info" class="d-none mt-3">
+                    <div class="user-name mb-3">Nama Pengguna</div>
+                    <a href="#" id="logout-button" class="btn btn-sm">Logout</a>
+                </div>
+                <div id="login-prompt" class="mt-3">
+                    <button type="button" class="btn btn-sm btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+            </div>
+            <ul class="navbar-nav justify-content-end flex-grow-1 p-3">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-home"></i> Beranda</a></li>
+                <li id="admin-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturanadmin.html"><i class="fa-solid fa-user-shield"></i> Pengaturan Administrator</a></li>
+                <li id="identitas-sekolah-menu-item" class="nav-item d-none"><a class="nav-link" href="identitas.html"><i class="fa-solid fa-school"></i> Identitas Sekolah</a></li>
+                <li id="profil-waka-menu-item" class="nav-item d-none"><a class="nav-link" href="wakasis.html"><i class="fa-solid fa-user-tie"></i> Profil Waka Kesiswaan</a></li>
+                <li id="pengaturan-data-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturandata.html"><i class="fa-solid fa-database"></i> Pengaturan Data</a></li>
+                <li class="nav-item"><a class="nav-link" href="datasiswa.html"><i class="fa-solid fa-users"></i> Data Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="prestasi.html"><i class="fa-solid fa-trophy"></i> Prestasi Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="bantuan.html"><i class="fa-solid fa-hand-holding-heart"></i> Bantuan Pendidikan</a></li>
+                <li class="nav-item"><a class="nav-link" href="putussekolah.html"><i class="fa-solid fa-user-slash"></i> Putus Sekolah</a></li>
+                <li class="nav-item"><a class="nav-link" href="mutasi.html"><i class="fa-solid fa-right-left"></i> Mutasi</a></li>
+                <li class="nav-item"><a class="nav-link active" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="pembinaan.html"><i class="fa-solid fa-chalkboard-user"></i> Pembinaan Guru/Walas/BK</a></li>
+                <li class="nav-item"><a class="nav-link" href="pemanggilan.html"><i class="fa-solid fa-print"></i> Cetak Berkas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">DATA ALUMNI</h1>
+
+        <!-- Kontainer Rekap Data -->
+        <div class="main-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-chart-bar me-2"></i> Rekapitulasi Data Alumni</span>
+                <button class="btn btn-sm" id="refresh-rekap-button" title="Refresh Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-4" id="rekap-container">
+                    <div class="col-lg-6 col-md-6">
+                        <h6><i class="fas fa-users me-2 text-primary"></i>Jumlah Alumni</h6>
+                        <ul class="list-group" id="rekap-jumlah-list">
+                            <li class="list-group-item">Memuat...</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <h6><i class="fas fa-calendar-check me-2 text-success"></i>Berdasarkan Tahun Lulus</h6>
+                        <ul class="list-group" id="rekap-tahun-lulus-list"></ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6 pt-3">
+                        <h6><i class="fas fa-sitemap me-2 text-warning"></i>Berdasarkan Jurusan</h6>
+                        <ul class="list-group" id="rekap-jurusan-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi (Responsif) -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-4 action-buttons">
+            <div class="input-group" style="max-width: 350px; min-width: 200px;">
+                <input type="text" class="form-control" placeholder="Cari alumni..." id="search-input" title="Cari berdasarkan nama, NISN, atau tahun lulus">
+                <button class="btn" type="button" id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="btn btn-primary" id="btn-luluskan-siswa" title="Luluskan Siswa dari Data Aktif"><i class="fas fa-user-check"></i> <span class="ms-1">Luluskan Siswa</span></button>
+            <button class="btn btn-success" id="btn-export-excel"><i class="fas fa-file-excel me-1"></i> Export</button>
+            <a href="index.html" class="btn ms-auto"><i class="fas fa-home me-1"></i> Beranda</a>
+        </div>
+
+        <!-- Tabel Data Alumni -->
+        <div class="main-card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Nama Siswa</th>
+                                <th scope="col">NISN</th>
+                                <th scope="col">NIPD</th>
+                                <th scope="col">NIK</th>
+                                <th scope="col">No.KK</th>
+                                <th scope="col">Tempat Lahir</th>
+                                <th scope="col">Tanggal Lahir</th>
+                                <th scope="col">Jenis Kelamin</th>
+                                <th scope="col">Agama</th>
+                                <th scope="col">Alamat</th>
+                                <th scope="col">Kode Pos</th>
+                                <th scope="col">Nama Ayah</th>
+                                <th scope="col">Pekerjaan Ayah</th>
+                                <th scope="col">Penghasilan Ayah</th>
+                                <th scope="col">Nama Ibu</th>
+                                <th scope="col">Pekerjaan Ibu</th>
+                                <th scope="col">Penghasilan Ibu</th>
+                                <th scope="col">Kelas Terakhir</th>
+                                <th scope="col">Jurusan</th>
+                                <th scope="col">Tanggal Lulus</th>
+                                <th scope="col">Tahun Lulus</th>
+                                <th scope="col">Dokumen</th>
+                                <th scope="col" class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alumni-table-body">
+                            <tr>
+                                <td colspan="24" class="text-center">Belum ada data alumni.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Info Login Diperlukan -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="loginRequiredModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Akses Dibatasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center fs-5">Silahkan login menggunakan akun Utama terlebih dahulu.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="btn-login-from-info" data-bs-toggle="modal" data-bs-target="#loginModal">Login Sekarang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login Administrator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">Username atau password salah.</div>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Username</label>
+                            <select class="form-select" id="login-username" required autocomplete="username"><option value="" selected disabled>Pilih username...</option></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Tampilkan/Sembunyikan password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" form="login-form" class="btn btn-primary" id="login-button">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Update Alumni -->
+    <div class="modal fade" id="alumniModal" tabindex="-1" aria-labelledby="alumniModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alumniModalLabel">Tambah Data Alumni</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form-alumni">
+                    <div class="modal-body">
+                        <!-- Konten form sama seperti modal siswa di datasiswa.html -->
+                        <!-- Ditambah field Tanggal Lulus, Tahun Lulus, dan File Ijazah -->
+                        <div class="row">
+                            <!-- Kolom Kiri -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3 text-primary">Data Pribadi Siswa</h6>
+                                <div class="mb-3">
+                                    <label for="nama_siswa" class="form-label">Nama Siswa</label>
+                                    <input type="text" class="form-control" id="nama_siswa" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3"><label for="nipd" class="form-label">NIPD</label><input type="text" class="form-control" id="nipd"></div>
+                                    <div class="col-sm-6 mb-3"><label for="nisn" class="form-label">NISN</label><input type="text" class="form-control" id="nisn"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3"><label for="nik" class="form-label">NIK</label><input type="text" class="form-control" id="nik"></div>
+                                    <div class="col-sm-6 mb-3"><label for="nomor_kk" class="form-label">No. KK</label><input type="text" class="form-control" id="nomor_kk"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3"><label for="tempat_lahir" class="form-label">Tempat Lahir</label><input type="text" class="form-control" id="tempat_lahir"></div>
+                                    <div class="col-sm-6 mb-3"><label for="tanggal_lahir" class="form-label">Tanggal Lahir</label><input type="date" class="form-control" id="tanggal_lahir"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3"><label for="jenis_kelamin" class="form-label">Jenis Kelamin</label><select class="form-select" id="jenis_kelamin"><option value="" selected disabled>Pilih...</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+                                    <div class="col-sm-6 mb-3"><label for="agama" class="form-label">Agama</label><select class="form-select" id="agama"><option value="" selected disabled>Pilih Agama...</option><option value="Islam">Islam</option><option value="Kristen Katholik">Kristen Katholik</option><option value="Kristen Protestan">Kristen Protestan</option><option value="Hindu">Hindu</option><option value="Budha">Budha</option><option value="Kong Fu Chu">Kong Fu Chu</option></select></div>
+                                </div>
+                                <div class="mb-3"><label for="alamat" class="form-label">Alamat</label><textarea class="form-control" id="alamat" rows="2"></textarea></div>
+                                <div class="row">
+                                    <div class="col-sm-4 mb-3"><label for="kode_pos" class="form-label">Kode Pos</label><input type="text" class="form-control" id="kode_pos"></div>
+                                    <div class="col-sm-4 mb-3"><label for="kelas" class="form-label">Kelas Terakhir</label><select class="form-select" id="kelas"></select></div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="jurusan" class="form-label">Jurusan</label>
+                                        <select class="form-select" id="jurusan"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Kolom Kanan -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3 text-primary">Data Orang Tua</h6>
+                                <div class="mb-3"><label for="nama_ayah" class="form-label">Nama Ayah</label><input type="text" class="form-control" id="nama_ayah"></div>
+                                <div class="mb-3"><label for="pekerjaan_ayah" class="form-label">Pekerjaan Ayah</label><select class="form-select" id="pekerjaan_ayah"><option value="" selected disabled>Pilih Pekerjaan...</option><option value="ASN">ASN</option><option value="Petani">Petani</option><option value="Nelayan">Nelayan</option><option value="Pegawai Swasta">Pegawai Swasta</option><option value="Buruh Harian">Buruh Harian</option><option value="Wiraswasta">Wiraswasta</option><option value="Tidak Bekerja">Tidak Bekerja</option></select></div>
+                                <div class="mb-3"><label for="penghasilan_ayah" class="form-label">Penghasilan Ayah</label><input type="text" class="form-control" id="penghasilan_ayah"></div>
+                                <hr>
+                                <div class="mb-3"><label for="nama_ibu" class="form-label">Nama Ibu</label><input type="text" class="form-control" id="nama_ibu"></div>
+                                <div class="mb-3"><label for="pekerjaan_ibu" class="form-label">Pekerjaan Ibu</label><select class="form-select" id="pekerjaan_ibu"><option value="" selected disabled>Pilih Pekerjaan...</option><option value="ASN">ASN</option><option value="Petani">Petani</option><option value="Nelayan">Nelayan</option><option value="Pegawai Swasta">Pegawai Swasta</option><option value="Buruh Harian">Buruh Harian</option><option value="Wiraswasta">Wiraswasta</option><option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option><option value="Tidak Bekerja">Tidak Bekerja</option></select></div>
+                                <div class="mb-3"><label for="penghasilan_ibu" class="form-label">Penghasilan Ibu</label><input type="text" class="form-control" id="penghasilan_ibu"></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6 class="mb-3 text-primary">Data Kelulusan</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="tanggal_lulus" class="form-label">Tanggal Lulus</label>
+                                <input type="date" class="form-control" id="tanggal_lulus" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="tahun_lulus" class="form-label">Tahun Lulus</label>
+                                <input type="number" class="form-control" id="tahun_lulus" placeholder="Contoh: 2024" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="file_ijazah" class="form-label">Dokumen Ijazah/SKL (PDF)</label>
+                                <input type="file" class="form-control" id="file_ijazah" accept="application/pdf,image/png,image/jpeg">
+                                <div id="current-file-link" class="form-text"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="alumni-id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-danger d-none" id="btn-delete-alumni">Hapus</button>
+                        <button type="button" class="btn btn-warning d-none" id="btn-update-alumni">Update</button>
+                        <button type="submit" class="btn btn-primary" id="btn-konfirmasi-alumni">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Baru: Luluskan Siswa -->
+    <div class="modal fade" id="luluskanSiswaModal" tabindex="-1" aria-labelledby="luluskanSiswaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="luluskanSiswaModalLabel"><i class="fas fa-user-check me-2"></i>Luluskan Siswa dari Data Siswa Aktif</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form Data Kelulusan -->
+                    <div class="main-card mb-4 p-3">
+                        <h6 class="mb-3 text-primary">1. Isi Data Kelulusan (Berlaku untuk semua siswa yang dipilih)</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="lulus-tanggal" class="form-label">Tanggal Lulus</label>
+                                <input type="date" class="form-control" id="lulus-tanggal" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="lulus-tahun" class="form-label">Tahun Lulus</label>
+                                <input type="number" class="form-control" id="lulus-tahun" placeholder="Contoh: 2024" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="lulus-jurusan" class="form-label">Jurusan</label>
+                                <select class="form-select" id="lulus-jurusan" required></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="lulus-dokumen" class="form-label">Dokumen Ijazah/SKL (Opsional)</label>
+                                <input type="file" class="form-control" id="lulus-dokumen" accept="application/pdf,image/png,image/jpeg">
+                                <div class="form-text">Akan diterapkan pada siswa pertama yang dipilih.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Siswa Aktif -->
+                    <div class="main-card p-3">
+                        <h6 class="mb-3 text-primary">2. Pilih Siswa yang Akan Diluluskan</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="search-siswa-aktif" placeholder="Cari siswa aktif...">
+                            <button class="btn" type="button" id="btn-search-siswa-aktif"><i class="fas fa-search"></i></button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 400px;">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"><input type="checkbox" id="select-all-siswa" title="Pilih Semua"></th>
+                                        <th scope="col">Nama Siswa</th>
+                                        <th scope="col">NISN</th>
+                                        <th scope="col">NIPD</th>
+                                        <th scope="col">NIK</th>
+                                        <th scope="col">No.KK</th>
+                                        <th scope="col">Tempat Lahir</th>
+                                        <th scope="col">Tanggal Lahir</th>
+                                        <th scope="col">Jenis Kelamin</th>
+                                        <th scope="col">Agama</th>
+                                        <th scope="col">Alamat</th>
+                                        <th scope="col">Kode Pos</th>
+                                        <th scope="col">Nama Ayah</th>
+                                        <th scope="col">Pekerjaan Ayah</th>
+                                        <th scope="col">Penghasilan Ayah</th>
+                                        <th scope="col">Nama Ibu</th>
+                                        <th scope="col">Pekerjaan Ibu</th>
+                                        <th scope="col">Penghasilan Ibu</th>
+                                        <th scope="col">Kelas Saat Ini</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="siswa-aktif-table-body">
+                                    <tr><td colspan="19" class="text-center">Memuat data siswa aktif...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btn-proses-luluskan"><i class="fas fa-check-circle me-2"></i>Proses Luluskan Siswa Terpilih</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p id="footer-school-name" class="footer-school-name">Nama Sekolah Anda</p>
+            <p id="footer-school-address" class="footer-school-address">Alamat Sekolah</p>
+            <div class="social-icons mb-2">
+                <a href="#" class="facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="youtube" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <small>&copy; Kenji Studio Developer 2025.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SheetJS (XLSX) Library for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Skrip Global dan Skrip Halaman -->
+    <!-- Tombol "Tambah Alumni" yang lama sudah tidak diperlukan karena diganti alur "Luluskan Siswa" -->
+    <!-- <button class="btn btn-primary" id="btn-tambah-alumni" title="Tambah Data Alumni"><i class="fas fa-plus"></i> <span class="ms-1">Tambah Alumni</span></button> -->
+
+    <script src="global.js"></script>
+    <script>
+        const alumniModal = new bootstrap.Modal(document.getElementById('alumniModal'));
+        const formAlumni = document.getElementById('form-alumni');
+        const alumniTableBody = document.getElementById('alumni-table-body');
+        let currentAlumniData = [];
+
+        // Elemen untuk modal baru
+        const luluskanSiswaModal = new bootstrap.Modal(document.getElementById('luluskanSiswaModal'));
+
+        // Fungsi untuk memuat data alumni
+        async function loadAlumni(searchTerm = '') {
+            alumniTableBody.innerHTML = `<tr><td colspan="24" class="text-center">Memuat data...</td></tr>`;
+
+            let query = supabaseClient.from('tabelalumni').select('*');
+
+            if (searchTerm) {
+                const searchPattern = `%${searchTerm}%`;
+                query = query.or(`nama_siswa.ilike.${searchPattern},nisn.ilike.${searchPattern},tahun_lulus.ilike.${searchPattern}`);
+            }
+
+            const { data, error } = await query.order('tahun_lulus', { ascending: false }).order('nama_siswa', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching alumni:', error);
+                alumniTableBody.innerHTML = `<tr><td colspan="24" class="text-center text-danger">Gagal memuat data.</td></tr>`;
+                return;
+            }
+
+
+            alumniTableBody.innerHTML = '';
+            data.forEach((alumni, index) => {
+                const fileLink = alumni.berkas ? `<a href="${alumni.berkas}" target="_blank" class="btn btn-sm btn-action btn-view-file"><i class="fas fa-file-alt pe-none"></i></a>` : 'Tidak Ada';
+                const row = `
+                    <tr>
+                        <th>${index + 1}</th>
+                        <td>${alumni.nama_siswa || '-'}</td>
+                        <td>${alumni.nisn || '-'}</td>
+                        <td>${alumni.nipd || '-'}</td>
+                        <td>${alumni.nik || '-'}</td>
+                        <td>${alumni.nomor_kk || '-'}</td>
+                        <td>${alumni.tempat_lahir || '-'}</td>
+                        <td>${alumni.tanggal_lahir || '-'}</td>
+                        <td>${alumni.jenis_kelamin || '-'}</td>
+                        <td>${alumni.agama || '-'}</td>
+                        <td>${alumni.alamat || '-'}</td>
+                        <td>${alumni.kode_pos || '-'}</td>
+                        <td>${alumni.nama_ayah || '-'}</td>
+                        <td>${alumni.pekerjaan_ayah || '-'}</td>
+                        <td>${alumni.penghasilan_ayah || '-'}</td>
+                        <td>${alumni.nama_ibu || '-'}</td>
+                        <td>${alumni.pekerjaan_ibu || '-'}</td>
+                        <td>${alumni.penghasilan_ibu || '-'}</td>
+                        <td>${alumni.kelas_terakhir || '-'}</td>
+                        <td>${alumni.jurusan || '-'}</td>
+                        <td>${alumni.tanggal_lulus || '-'}</td>
+                        <td>${alumni.tahun_lulus || '-'}</td>
+                        <td class="text-center">${fileLink}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-info btn-detail" data-id="${alumni.id}">Klik Me</button>
+                        </td>
+                    </tr>
+                `;
+                alumniTableBody.innerHTML += row;
+            });
+        }
+
+        // Fungsi untuk update rekapitulasi
+        function updateRekap(data) {
+            const rekapJumlahList = document.getElementById('rekap-jumlah-list');
+            const rekapTahunList = document.getElementById('rekap-tahun-lulus-list');
+            const rekapJurusanList = document.getElementById('rekap-jurusan-list');
+
+            rekapJumlahList.innerHTML = '';
+            rekapTahunList.innerHTML = '';
+            rekapJurusanList.innerHTML = '';
+
+            if (data.length === 0) {
+                rekapJumlahList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                rekapTahunList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                rekapJurusanList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                return;
+            }
+
+            const totalAlumni = data.length;
+            const lakiLaki = data.filter(a => a.jenis_kelamin === 'Laki-laki').length;
+            const perempuan = totalAlumni - lakiLaki;
+
+            rekapJumlahList.innerHTML = `
+                <li class="list-group-item d-flex justify-content-between align-items-center">Total Alumni <span class="badge bg-primary rounded-pill">${totalAlumni}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Laki-laki <span class="badge bg-info rounded-pill">${lakiLaki}</span></li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">Perempuan <span class="badge bg-danger rounded-pill">${perempuan}</span></li>
+            `;
+
+            const countFrequency = (arr, key) => arr.reduce((acc, item) => {
+                const value = item[key] || 'Tidak Diisi';
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {});
+
+            const renderList = (element, data, colorPalette) => {
+                const sortedKeys = Object.keys(data).sort((a, b) => data[b] - data[a]);
+                sortedKeys.forEach((key, index) => {
+                    const value = data[key];
+                    const badgeColor = colorPalette[index % colorPalette.length];
+                    element.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">${key} <span class="badge ${badgeColor} rounded-pill">${value}</span></li>`;
+                });
+            };
+
+            renderList(rekapTahunList, countFrequency(data, 'tahun_lulus'), ['bg-success', 'bg-primary', 'bg-dark']);
+            renderList(rekapJurusanList, countFrequency(data, 'jurusan'), ['bg-warning text-dark', 'bg-info text-dark', 'bg-danger']);
+        }
+
+        // Fungsi untuk mengisi dropdown di modal
+        async function populateDropdowns() {
+            const selects = {
+                kelas: document.getElementById('kelas'),
+                jurusan: document.getElementById('jurusan'),
+            };
+            try {
+                const { data, error } = await supabaseClient.from('tabelpengaturan').select('kelas, jurusan');
+                if (error) throw error;
+                const uniqueKelas = [...new Set(data.map(item => item.kelas).filter(Boolean))].sort();
+                const uniqueJurusan = [...new Set(data.map(item => item.jurusan).filter(Boolean))].sort();
+                const populate = (select, options, placeholder) => {
+                    select.innerHTML = `<option value="">${placeholder}</option>`;
+                    options.forEach(opt => { select.innerHTML += `<option value="${opt}">${opt}</option>`; });
+                };
+                populate(selects.kelas, uniqueKelas, 'Pilih Kelas...');
+                populate(selects.jurusan, uniqueJurusan, 'Pilih Jurusan...');
+            } catch (error) {
+                console.error('Gagal memuat data dropdown:', error);
+            }
+        }
+
+        // --- LOGIKA UNTUK MODAL LULUSKAN SISWA ---
+
+        // Fungsi untuk memuat siswa aktif ke dalam modal
+        async function loadSiswaAktif(searchTerm = '') {
+            const siswaAktifTableBody = document.getElementById('siswa-aktif-table-body');
+            siswaAktifTableBody.innerHTML = `<tr><td colspan="19" class="text-center">Memuat data siswa...</td></tr>`;
+
+            let query = supabaseClient.from('tabelsiswa').select('*');
+
+            if (searchTerm) {
+                const searchPattern = `%${searchTerm}%`;
+                query = query.or(`nama_siswa.ilike.${searchPattern},nisn.ilike.${searchPattern},kelas.ilike.${searchPattern}`);
+            }
+
+            const { data, error } = await query.order('kelas').order('nama_siswa');
+
+            if (error) {
+                console.error('Error fetching active students:', error);
+                siswaAktifTableBody.innerHTML = `<tr><td colspan="19" class="text-center text-danger">Gagal memuat data siswa.</td></tr>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                siswaAktifTableBody.innerHTML = `<tr><td colspan="19" class="text-center">Tidak ada data siswa aktif.</td></tr>`;
+                return;
+            }
+
+            siswaAktifTableBody.innerHTML = '';
+            data.forEach(siswa => {
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" class="siswa-checkbox" data-id="${siswa.id}"></td>
+                        <td>${siswa.nama_siswa || '-'}</td>
+                        <td>${siswa.nisn || '-'}</td>
+                        <td>${siswa.nipd || '-'}</td>
+                        <td>${siswa.nik || '-'}</td>
+                        <td>${siswa.nomor_kk || '-'}</td>
+                        <td>${siswa.tempat_lahir || '-'}</td>
+                        <td>${siswa.tanggal_lahir || '-'}</td>
+                        <td>${siswa.jenis_kelamin || '-'}</td>
+                        <td>${siswa.agama || '-'}</td>
+                        <td>${siswa.alamat || '-'}</td>
+                        <td>${siswa.kode_pos || '-'}</td>
+                        <td>${siswa.nama_ayah || '-'}</td>
+                        <td>${siswa.pekerjaan_ayah || '-'}</td>
+                        <td>${siswa.penghasilan_ayah || '-'}</td>
+                        <td>${siswa.nama_ibu || '-'}</td>
+                        <td>${siswa.pekerjaan_ibu || '-'}</td>
+                        <td>${siswa.penghasilan_ibu || '-'}</td>
+                        <td>${siswa.kelas || '-'}</td>
+                    </tr>
+                `;
+                siswaAktifTableBody.innerHTML += row;
+            });
+        }
+
+        // Event listener saat modal "Luluskan Siswa" ditampilkan
+        document.getElementById('luluskanSiswaModal').addEventListener('show.bs.modal', () => {
+            loadSiswaAktif(); // Muat data siswa aktif
+            // Isi dropdown jurusan di modal luluskan
+            const jurusanSelect = document.getElementById('lulus-jurusan');
+            const jurusanOptions = document.getElementById('jurusan').innerHTML; // Ambil dari dropdown utama
+            jurusanSelect.innerHTML = jurusanOptions;
+            jurusanSelect.querySelector('option').textContent = "Pilih Jurusan...";
+        });
+
+        // Event listener untuk pencarian siswa aktif di dalam modal
+        document.getElementById('btn-search-siswa-aktif').addEventListener('click', () => {
+            const searchTerm = document.getElementById('search-siswa-aktif').value;
+            loadSiswaAktif(searchTerm);
+        });
+        document.getElementById('search-siswa-aktif').addEventListener('input', (e) => {
+            loadSiswaAktif(e.target.value);
+        });
+
+        // Event listener untuk checkbox "Pilih Semua"
+        document.getElementById('select-all-siswa').addEventListener('change', function() {
+            document.querySelectorAll('.siswa-checkbox').forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Event listener untuk tombol "Proses Luluskan Siswa Terpilih"
+        document.getElementById('btn-proses-luluskan').addEventListener('click', async function() {
+            const btn = this;
+            const selectedCheckboxes = document.querySelectorAll('.siswa-checkbox:checked');
+            const tanggalLulus = document.getElementById('lulus-tanggal').value;
+            const tahunLulus = document.getElementById('lulus-tahun').value;
+            const jurusanLulus = document.getElementById('lulus-jurusan').value;
+            // Nama kolom di tabel alumni adalah 'berkas'
+            const dokumenFile = document.getElementById('lulus-dokumen').files[0];
+
+            if (selectedCheckboxes.length === 0) {
+                alert('Pilih setidaknya satu siswa untuk diluluskan.');
+                return;
+            }
+            if (!tanggalLulus || !tahunLulus || !jurusanLulus) {
+                alert('Harap isi Tanggal Lulus, Tahun Lulus, dan Jurusan.');
+                return;
+            }
+
+            if (!confirm(`Anda akan meluluskan ${selectedCheckboxes.length} siswa. Proses ini akan memindahkan data siswa ke tabel alumni dan menghapusnya dari data siswa aktif. Lanjutkan?`)) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memproses...';
+
+            try {
+                let berkasUrl = null;
+
+                // 1. Upload file ke bucket 'aset' jika ada
+                if (dokumenFile) {
+                    const filePath = `dokumen-kelulusan/${Date.now()}-${dokumenFile.name}`;
+                    const { error: uploadError } = await supabaseClient.storage.from('aset').upload(filePath, dokumenFile);
+
+                    if (uploadError) {
+                        throw new Error('Gagal mengunggah dokumen: ' + uploadError.message);
+                    }
+
+                    const { data: urlData } = supabaseClient.storage.from('aset').getPublicUrl(filePath);
+                    berkasUrl = urlData.publicUrl;
+                }
+
+                const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.id);
+                
+                // 2. Ambil data lengkap siswa yang dipilih dari tabelsiswa
+                const { data: siswaToLulus, error: fetchError } = await supabaseClient
+                    .from('tabelsiswa')
+                    .select('*')
+                    .in('id', selectedIds);
+
+                if (fetchError) throw new Error('Gagal mengambil data siswa: ' + fetchError.message);
+
+                // 3. Siapkan data untuk dimasukkan ke tabelalumni
+                const dataForAlumni = siswaToLulus.map(siswa => {
+                    // Hapus kolom 'id', 'created_at', dan 'kelas' dari data siswa asli
+                    const { id, created_at, kelas, ...restOfSiswa } = siswa;
+                    return {
+                        ...restOfSiswa, // Salin semua data siswa
+                        // Gunakan nilai dari kolom 'kelas' (yang sudah kita hapus dari ...restOfSiswa) untuk mengisi 'kelas_terakhir'
+                        kelas_terakhir: kelas,
+                        tanggal_lulus: tanggalLulus,
+                        tahun_lulus: tahunLulus,
+                        jurusan: jurusanLulus,
+                        berkas: berkasUrl // Nama kolom di tabelalumni adalah 'berkas'
+                    };
+                });
+
+                // 4. Masukkan data ke tabelalumni
+                const { error: insertError } = await supabaseClient.from('tabelalumni').insert(dataForAlumni);
+                if (insertError) throw new Error('Gagal menyimpan ke data alumni: ' + insertError.message);
+
+                // 5. Hapus siswa dari tabelsiswa setelah berhasil dimasukkan ke alumni
+                const { error: deleteError } = await supabaseClient.from('tabelsiswa').delete().in('id', selectedIds);
+                if (deleteError) {
+                    // Ini jarang terjadi, tapi penting untuk dicatat
+                    alert('Siswa berhasil diluluskan, namun gagal dihapus dari daftar siswa aktif. Harap periksa manual. Error: ' + deleteError.message);
+                } else {
+                    alert(`${selectedCheckboxes.length} siswa berhasil diluluskan!`);
+                }
+
+                luluskanSiswaModal.hide();
+                await loadAlumni(); // Refresh tabel alumni
+            } catch (error) {
+                console.error('Gagal meluluskan siswa:', error);
+                alert('Terjadi kesalahan saat memproses kelulusan: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Proses Luluskan Siswa Terpilih';
+            }
+        });
+
+        // --- AKHIR LOGIKA MODAL LULUSKAN SISWA ---
+
+        // Event Delegation untuk tombol "Klik Me" di tabel alumni
+        alumniTableBody.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('btn-detail')) {
+                const alumniId = event.target.dataset.id;
+
+                // Ambil data lengkap alumni dari database
+                const { data, error } = await supabaseClient
+                    .from('tabelalumni')
+                    .select('*')
+                    .eq('id', alumniId)
+                    .single();
+
+                if (error) {
+                    alert('Gagal mengambil detail data alumni.');
+                    return;
+                }
+
+                // Isi form modal dengan data alumni
+                document.getElementById('alumni-id').value = data.id;
+                document.getElementById('nama_siswa').value = data.nama_siswa;
+                document.getElementById('nipd').value = data.nipd || '';
+                document.getElementById('nisn').value = data.nisn || '';
+                document.getElementById('nik').value = data.nik || '';
+                document.getElementById('nomor_kk').value = data.nomor_kk || '';
+                document.getElementById('tempat_lahir').value = data.tempat_lahir || '';
+                document.getElementById('tanggal_lahir').value = data.tanggal_lahir || '';
+                document.getElementById('jenis_kelamin').value = data.jenis_kelamin || '';
+                document.getElementById('agama').value = data.agama || '';
+                document.getElementById('alamat').value = data.alamat || '';
+                document.getElementById('kode_pos').value = data.kode_pos || '';
+                document.getElementById('nama_ayah').value = data.nama_ayah || '';
+                document.getElementById('pekerjaan_ayah').value = data.pekerjaan_ayah || '';
+                document.getElementById('penghasilan_ayah').value = data.penghasilan_ayah || '';
+                document.getElementById('nama_ibu').value = data.nama_ibu || '';
+                document.getElementById('pekerjaan_ibu').value = data.pekerjaan_ibu || '';
+                document.getElementById('penghasilan_ibu').value = data.penghasilan_ibu || '';
+                document.getElementById('kelas').value = data.kelas_terakhir || '';
+                
+                document.getElementById('jurusan').value = data.jurusan || '';
+                document.getElementById('tanggal_lulus').value = data.tanggal_lulus || '';
+                document.getElementById('tahun_lulus').value = data.tahun_lulus || '';
+
+                const currentFileLink = document.getElementById('current-file-link');
+                currentFileLink.innerHTML = data.berkas ? `Dokumen saat ini: <a href="${data.berkas}" target="_blank">Lihat Dokumen</a>` : '<em>Tidak ada dokumen terlampir.</em>';
+
+                // Nonaktifkan semua field kecuali data kelulusan
+                const fieldsToDisable = [
+                    'nama_siswa', 'nipd', 'nisn', 'nik', 'nomor_kk', 'tempat_lahir', 'tanggal_lahir',
+                    'jenis_kelamin', 'agama', 'alamat', 'kode_pos', 'kelas', 'nama_ayah', 'pekerjaan_ayah',
+                    'penghasilan_ayah', 'nama_ibu', 'pekerjaan_ibu', 'penghasilan_ibu'
+                ];
+
+                fieldsToDisable.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el.tagName === 'SELECT') {
+                        el.disabled = true;
+                    } else {
+                        el.readOnly = true;
+                    }
+                });
+
+                // Pastikan field yang bisa diupdate aktif
+                const fieldsToEnable = ['jurusan', 'tanggal_lulus', 'tahun_lulus', 'file_ijazah'];
+                fieldsToEnable.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.disabled = false;
+                    el.readOnly = false;
+                });
+
+
+                // Ubah judul modal dan tampilan tombol
+                document.getElementById('alumniModalLabel').textContent = 'Detail / Update Data Alumni';
+                document.getElementById('btn-konfirmasi-alumni').classList.add('d-none');
+                document.getElementById('btn-update-alumni').classList.remove('d-none');
+                document.getElementById('btn-delete-alumni').classList.remove('d-none');
+
+                // Tampilkan modal
+                alumniModal.show();
+            }
+        });
+
+        // Event listener untuk tombol UPDATE di modal
+        document.getElementById('btn-update-alumni').addEventListener('click', async () => {
+            const alumniId = document.getElementById('alumni-id').value;
+            if (!alumniId) return;
+
+            const btnUpdate = document.getElementById('btn-update-alumni');
+            btnUpdate.disabled = true;
+            btnUpdate.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Mengupdate...';
+
+            try {
+                const newFile = document.getElementById('file_ijazah').files[0];
+                let newFileUrl = null;
+
+                // 1. Jika ada file baru, upload terlebih dahulu
+                if (newFile) {
+                    const filePath = `dokumen-kelulusan/${Date.now()}-${newFile.name}`;
+                    const { error: uploadError } = await supabaseClient.storage.from('aset').upload(filePath, newFile);
+                    if (uploadError) throw new Error('Gagal mengunggah dokumen baru: ' + uploadError.message);
+
+                    const { data: urlData } = supabaseClient.storage.from('aset').getPublicUrl(filePath);
+                    newFileUrl = urlData.publicUrl;
+                    // Di aplikasi nyata, Anda mungkin ingin menghapus file lama dari storage di sini
+                }
+
+                // 2. Siapkan data yang akan diupdate
+                const updatedData = {
+                    jurusan: document.getElementById('jurusan').value,
+                    tanggal_lulus: document.getElementById('tanggal_lulus').value,
+                    tahun_lulus: document.getElementById('tahun_lulus').value,
+                };
+
+                // Hanya tambahkan properti 'berkas' jika ada file baru yang diunggah
+                if (newFileUrl) {
+                    updatedData.berkas = newFileUrl;
+                }
+
+                // 3. Kirim pembaruan ke Supabase
+                const { error } = await supabaseClient
+                    .from('tabelalumni')
+                    .update(updatedData)
+                    .eq('id', alumniId);
+
+                if (error) throw new Error('Gagal mengupdate data: ' + error.message);
+
+                alert('Data alumni berhasil diupdate!');
+                alumniModal.hide();
+                await loadAlumni(); // Muat ulang tabel untuk menampilkan perubahan
+
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                btnUpdate.disabled = false;
+                btnUpdate.innerHTML = 'Update';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            loadSchoolIdentity();
+            populateLoginUsernames();
+            populateDropdowns();
+            loadAlumni();
+
+            // Logika untuk menu hamburger berdasarkan status login
+            const navMenu = document.querySelector('.offcanvas-body .navbar-nav');
+            navMenu.addEventListener('click', function(event) {
+                const link = event.target.closest('.nav-link');
+                if (!link) return;
+
+                const userAvatar = document.getElementById('user-avatar');
+                const href = link.getAttribute('href');
+
+                // Jika foto profil kosong (belum login) dan link BUKAN Beranda/anchor
+                if (!userAvatar.src && href !== 'index.html' && href !== '#') {
+                    // Cegah navigasi dan tampilkan pesan
+                    event.preventDefault();
+                    alert('Silahkan Login Terlebih Dahulu');
+                }
+            });
+
+            // Event listener untuk pencarian
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            searchInput.addEventListener('input', () => loadAlumni(searchInput.value.trim()));
+            searchButton.addEventListener('click', () => loadAlumni(searchInput.value.trim()));
+
+            // Event listener untuk refresh
+            document.getElementById('refresh-rekap-button').addEventListener('click', async () => {
+                const refreshButton = document.getElementById('refresh-rekap-button');
+                const icon = refreshButton.querySelector('i');
+                refreshButton.disabled = true;
+                icon.classList.add('fa-spin');
+                await loadAlumni(searchInput.value.trim());
+                refreshButton.disabled = false;
+                icon.classList.remove('fa-spin');
+            });
+
+            // Event listener untuk tombol "Luluskan Siswa" dengan pengecekan akses
+            document.getElementById('btn-luluskan-siswa').addEventListener('click', function() {
+                const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+                if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+                    luluskanSiswaModal.show();
+                } else {
+                    // Tampilkan modal yang memberitahu user untuk login sebagai admin utama
+                    const loginRequiredModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                    loginRequiredModal.show();
+                }
+            });
+            // Event listener untuk tombol Export Excel
+            document.getElementById('btn-export-excel').addEventListener('click', () => {
+                const exportButton = document.getElementById('btn-export-excel');
+                const originalHtml = exportButton.innerHTML;
+                
+                exportButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
+
+                try {
+                    // Ambil data yang sedang ditampilkan di tabel dari variabel global
+                    if (currentAlumniData.length === 0) {
+                        alert('Tidak ada data untuk di-export.');
+                        return;
+                    }
+
+                    // Siapkan data untuk export dengan header yang sesuai
+                    const dataToExport = currentAlumniData.map((alumni, index) => ({
+                        'No': index + 1,
+                        'Nama Siswa': alumni.nama_siswa, 'NISN': alumni.nisn, 'NIPD': alumni.nipd,
+                        'NIK': alumni.nik, 'No.KK': alumni.nomor_kk, 'Tempat Lahir': alumni.tempat_lahir,
+                        'Tanggal Lahir': alumni.tanggal_lahir, 'Jenis Kelamin': alumni.jenis_kelamin,
+                        'Agama': alumni.agama, 'Alamat': alumni.alamat, 'Kode Pos': alumni.kode_pos,
+                        'Nama Ayah': alumni.nama_ayah, 'Pekerjaan Ayah': alumni.pekerjaan_ayah,
+                        'Penghasilan Ayah': alumni.penghasilan_ayah, 'Nama Ibu': alumni.nama_ibu,
+                        'Pekerjaan Ibu': alumni.pekerjaan_ibu, 'Penghasilan Ibu': alumni.penghasilan_ibu,
+                        'Kelas Terakhir': alumni.kelas_terakhir, 'Jurusan': alumni.jurusan,
+                        'Tanggal Lulus': alumni.tanggal_lulus, 'Tahun Lulus': alumni.tahun_lulus,
+                        'Link Dokumen': alumni.berkas
+                    }));
+
+                    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+                    const workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Alumni");
+                    XLSX.writeFile(workbook, "Data_Alumni.xlsx");
+                } finally {
+                    exportButton.disabled = false;
+                    exportButton.innerHTML = originalHtml;
+                }
+            });
+
+            // Event listener untuk tombol "Tambah Alumni" manual (jika masih ingin digunakan)
+            // Untuk saat ini, kita nonaktifkan karena alur utamanya adalah "Luluskan Siswa"
+            // document.getElementById('btn-tambah-alumni-manual').addEventListener('click', function() {
+            //     const loggedInUserJSON = localStorage.getItem('loggedInUser');
+            //     if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+            //         formAlumni.reset();
+            //         document.getElementById('alumniModalLabel').textContent = 'Tambah Data Alumni Manual';
+            //         // Atur tombol-tombol di modal manual
+            //         alumniModal.show();
+            //     } else {
+            //         const loginRequiredModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+            //         loginRequiredModal.show();
+            //     }
+            // });
+        });
+    </script>
+
+</body>
+</html>

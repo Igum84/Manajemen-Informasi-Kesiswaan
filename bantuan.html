@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Bantuan Pendidikan - Manajemen Sistem Kesiswaan</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-color: #e0e5ec; /* Warna latar belakang utama untuk efek 3D */
+            --primary-blue: #007bff; /* Warna tombol/highlight default */
+            --dark-text: #343a40;
+            /* Bayangan untuk efek 3D menonjol */
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --protruding-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            --inset-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            --widget-radius: 18px; /* Sudut membulat yang lebih besar */
+        }
+
+        /* Reset dan Layout Dasar */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color); 
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: 80px; /* Memberi ruang untuk navbar fixed-top */
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: var(--bg-color) !important;
+            box-shadow: var(--protruding-shadow);
+            color: var(--dark-text);
+        }
+        .navbar-brand strong {
+            color: var(--dark-text);
+        }
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            box-shadow: var(--protruding-shadow);
+            object-fit: cover;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .navbar-toggler:hover, .navbar-toggler:focus {
+            box-shadow: var(--inset-shadow);
+            outline: none;
+        }
+
+        /* Offcanvas Menu Styling */
+        .offcanvas.offcanvas-end {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+        }
+        .navbar-toggler:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .offcanvas-header {
+            background-color: var(--bg-color); 
+            border-bottom: 1px solid var(--shadow-dark);
+            color: var(--dark-text);
+        }
+
+        .user-card {
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .user-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: var(--protruding-shadow);
+            padding: 5px;
+            background-color: var(--bg-color);
+        }
+
+        .user-card .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .user-card .btn, .user-card .btn-login {
+            box-shadow: var(--protruding-shadow);
+            border: none;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card .btn:hover, .user-card .btn-login:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .user-card #logout-button {
+            color: #dc3545;
+        }
+
+        .offcanvas-body .nav-link {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            padding-left: 1.5rem; /* DIGESER: Memberi jarak dari tepi kiri */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .offcanvas-body .nav-link i {
+            margin-right: 0.75rem; /* DIGESER: Jarak antara ikon dan teks */
+            width: 20px; /* Pastikan ikon punya lebar tetap agar rapi */
+            text-align: center;
+        }
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link:focus {
+            box-shadow: var(--inset-shadow);
+            transform: translateY(2px);
+        }
+        .offcanvas-body .nav-link.active {
+            color: var(--primary-blue); 
+            box-shadow: var(--inset-shadow);
+            font-weight: 600;
+        }
+
+        /* Footer Styling */
+        .footer {
+            padding: 2rem 0;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow); 
+        }
+        .footer-school-name, .footer-school-address {
+            color: var(--dark-text);
+        }
+        .footer .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            font-size: 1.4rem;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .footer .social-icons a:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Custom page styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+            margin-bottom: 2rem !important;
+            text-align: center;
+        }
+        .main-card {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--protruding-shadow);
+            padding: 1.5rem;
+        }
+        .main-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--shadow-dark);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .main-card .list-group-item {
+            background-color: transparent;
+            border-color: rgba(0,0,0,0.05);
+        }
+        .action-buttons .btn, .action-buttons .input-group .btn {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: box-shadow 0.2s ease;
+        }
+        .action-buttons .btn:hover, .action-buttons .input-group .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .action-buttons .btn-primary { color: var(--primary-blue); }
+        .action-buttons .btn-success { color: #198754; }
+        .action-buttons .form-control {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .action-buttons .form-control:focus {
+             box-shadow: var(--inset-shadow), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .table {
+            background-color: transparent;
+            font-size: 0.9rem;
+        }
+        .table thead th {
+            background-color: var(--bg-color);
+            text-align: center;
+            font-weight: 600;
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow);
+        }
+        .table td, .table th {
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+            padding: 0.75rem;
+        }
+
+        /* Modal Styles */
+        .modal-content { background-color: var(--bg-color); border: none; border-radius: var(--widget-radius); box-shadow: none; }
+        .modal-header, .modal-footer { background-color: var(--bg-color); border-color: var(--shadow-dark); }
+        .modal-body {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .modal-body .form-control, .modal-body .form-select { background-color: var(--bg-color); border: none; border-radius: 10px; box-shadow: var(--inset-shadow); color: var(--dark-text); }
+        .modal-footer .btn {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+        }
+        .modal-footer .btn:hover { box-shadow: var(--inset-shadow); }
+        .modal-footer .btn-primary { color: var(--primary-blue); }
+        .modal-footer .btn-warning { color: #ffc107; }
+        .modal-footer .btn-danger { color: #dc3545; }
+        .modal-footer .btn-success { color: #198754; }
+        #current-berkas-link {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        #bantuan-table-body .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        #bantuan-table-body .btn-action:hover { box-shadow: var(--inset-shadow); }
+        #bantuan-table-body .btn-edit { color: #ffc107; }
+        #bantuan-table-body .btn-delete { color: #dc3545; }
+        #bantuan-table-body .btn-view-berkas { color: var(--primary-blue); }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="logo.png" alt="Logo Sekolah" class="me-2">
+                    <strong>Manajemen Kesiswaan</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" title="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu Utama</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="user-card p-3 text-center">
+                <img id="user-avatar" src="logo.png" alt="Foto User">
+                <div id="user-info" class="d-none mt-3">
+                    <div class="user-name mb-3">Nama Pengguna</div>
+                    <a href="#" id="logout-button" class="btn btn-sm">Logout</a>
+                </div>
+                <div id="login-prompt" class="mt-3">
+                    <button type="button" class="btn btn-sm btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+            </div>
+            <ul class="navbar-nav justify-content-end flex-grow-1 p-3">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-home"></i> Beranda</a></li>
+                <li id="admin-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturanadmin.html"><i class="fa-solid fa-user-shield"></i> Pengaturan Administrator</a></li>
+                <li id="identitas-sekolah-menu-item" class="nav-item d-none"><a class="nav-link" href="identitas.html"><i class="fa-solid fa-school"></i> Identitas Sekolah</a></li>
+                <li id="profil-waka-menu-item" class="nav-item d-none"><a class="nav-link" href="wakasis.html"><i class="fa-solid fa-user-tie"></i> Profil Waka Kesiswaan</a></li>
+                <li id="pengaturan-data-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturandata.html"><i class="fa-solid fa-database"></i> Pengaturan Data</a></li>
+                <li class="nav-item"><a class="nav-link" href="datasiswa.html"><i class="fa-solid fa-users"></i> Data Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="prestasi.html"><i class="fa-solid fa-trophy"></i> Prestasi Siswa</a></li>
+                <li class="nav-item"><a class="nav-link active" href="bantuan.html"><i class="fa-solid fa-hand-holding-heart"></i> Bantuan Pendidikan</a></li>
+                <li class="nav-item"><a class="nav-link" href="putussekolah.html"><i class="fa-solid fa-user-slash"></i> Putus Sekolah</a></li>
+                <li class="nav-item"><a class="nav-link" href="mutasi.html"><i class="fa-solid fa-right-left"></i> Mutasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="pembinaan.html"><i class="fa-solid fa-chalkboard-user"></i> Pembinaan Guru/Walas/BK</a></li>
+                <li class="nav-item"><a class="nav-link" href="pemanggilan.html"><i class="fa-solid fa-print"></i> Cetak Berkas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">DATA BANTUAN PENDIDIKAN SISWA</h1>
+
+        <!-- Kontainer Rekap Data Bantuan -->
+        <div class="main-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-chart-line me-2"></i> Rekapitulasi Data Bantuan</span>
+                <button class="btn btn-sm" id="refresh-rekap-button" title="Refresh Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-4" id="rekap-container">
+                    <div class="col-lg-6 col-md-6">
+                        <h6><i class="fas fa-users me-2 text-primary"></i>Jumlah Penerima</h6>
+                        <ul class="list-group" id="rekap-jumlah-list">
+                            <li class="list-group-item">Memuat...</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <h6><i class="fas fa-chalkboard-teacher me-2 text-warning"></i>Berdasarkan Kelas</h6>
+                        <ul class="list-group" id="rekap-kelas-list"></ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6 pt-3">
+                        <h6><i class="fas fa-layer-group me-2 text-success"></i>Berdasarkan Jenis Bantuan</h6>
+                        <ul class="list-group" id="rekap-jenis-list"></ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6 pt-3">
+                        <h6><i class="fas fa-calendar-alt me-2 text-info"></i>Berdasarkan Tahun</h6>
+                        <ul class="list-group" id="rekap-tahun-list"></ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Kontainer untuk Grafik/Chart -->
+            <div class="card-footer bg-transparent pt-3">
+                <div class="row justify-content-center align-items-center g-4">
+                    <div class="col-lg-4 col-md-6" style="max-height: 300px;">
+                        <canvas id="jenisBantuanPieChart"></canvas>
+                    </div>
+                    <div class="col-lg-4 col-md-6" style="max-height: 300px;">
+                        <canvas id="kelasBantuanPieChart"></canvas>
+                    </div>
+                    <div class="col-lg-4 col-md-6" style="max-height: 300px;">
+                        <canvas id="tahunBantuanPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi (Responsif) -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-4 action-buttons">
+            <div class="input-group" style="max-width: 350px; min-width: 200px;">
+                <input type="text" class="form-control" placeholder="Cari bantuan..." id="search-input" title="Cari berdasarkan nama siswa, NISN, atau jenis bantuan">
+                <button class="btn" type="button" id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="btn btn-primary" id="btn-tambah-bantuan" title="Tambah Data Bantuan"><i class="fas fa-plus"></i> <span class="ms-1">Tambah Bantuan</span></button>
+            <button class="btn btn-success" id="btn-export-excel"><i class="fas fa-file-excel me-1"></i> Export</button>
+            <a href="index.html" class="btn ms-auto"><i class="fas fa-home me-1"></i> Beranda</a>
+        </div>
+
+        <!-- Tabel Data Bantuan -->
+        <div class="main-card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Nama Siswa</th>
+                                <th scope="col">NISN</th>
+                                <th scope="col">Kelas</th>
+                                <th scope="col">Jurusan</th>
+                                <th scope="col">Jenis Bantuan</th>
+                                <th scope="col">Tahun</th>
+                                <th scope="col">Tanggal Penerimaan</th>
+                                <th scope="col">Besaran Bantuan</th>
+                                <th scope="col" class="text-center">Aksi</th>
+                                <th scope="col">Berkas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bantuan-table-body">
+                            <!-- Contoh baris data (placeholder) -->
+                            <tr>
+                                <td colspan="11" class="text-center">Belum ada data bantuan.</td>
+                            </tr>
+                            <!-- Data dari Supabase akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigasi Paginasi (jika diperlukan nanti) -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+    </main>
+
+    <!-- Modal Info Login Diperlukan (BARU) -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="loginRequiredModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Akses Dibatasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center fs-5">Silahkan login menggunakan akun Utama terlebih dahulu.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="btn-login-from-info" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Login Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (Disalin dari index.html) -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login Administrator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">
+                        Username atau password salah.
+                    </div>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Username</label>
+                            <select class="form-select" id="login-username" required autocomplete="username">
+                                <option value="" selected disabled>Pilih username...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Tampilkan/Sembunyikan password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" form="login-form" class="btn btn-primary" id="login-button">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Update Bantuan -->
+    <div class="modal fade" id="bantuanModal" tabindex="-1" aria-labelledby="bantuanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bantuanModalLabel">Tambah Data Bantuan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form-bantuan">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nama_siswa" class="form-label">Nama Siswa</label>
+                                <input type="text" class="form-control" id="nama_siswa" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="nisn" class="form-label">NISN</label>
+                                <input type="text" class="form-control" id="nisn">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="kelas" class="form-label">Kelas</label>
+                                <select class="form-select" id="kelas">
+                                    <option value="" selected disabled>Memuat kelas...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="jurusan" class="form-label">Jurusan</label>
+                                <select class="form-select" id="jurusan">
+                                    <option value="" selected disabled>Memuat jurusan...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jenis_bantuan" class="form-label">Jenis Bantuan</label>
+                            <input type="text" class="form-control" id="jenis_bantuan" required placeholder="Contoh: PIP, KJP, Bantuan Sekolah">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tahun" class="form-label">Tahun</label>
+                                <input type="number" class="form-control" id="tahun" placeholder="Contoh: 2024" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="besaran_bantuan" class="form-label">Besaran Bantuan</label>
+                                <input type="text" class="form-control" id="besaran_bantuan" placeholder="Contoh: Rp 500.000">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tanggal_penerimaan" class="form-label">Tanggal Penerimaan Bantuan</label>
+                            <input type="date" class="form-control" id="tanggal_penerimaan">
+                        </div>
+                        <div class="mb-3">
+                            <label for="upload_berkas" class="form-label">Upload Berkas (Opsional)</label>
+                            <input class="form-control" type="file" id="upload_berkas" accept="application/pdf,image/png,image/jpeg">
+                            <div class="form-text">Maksimal ukuran file: 1MB. Format yang diterima: PDF, JPG, PNG.</div>
+                            <div id="current-berkas-link" class="mt-2">
+                                <!-- Link ke berkas yang sudah ada akan muncul di sini saat edit -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="bantuan-id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-danger d-none" id="btn-delete-bantuan">Hapus</button>
+                        <button type="button" class="btn btn-warning d-none" id="btn-update-bantuan">Update</button>
+                        <button type="submit" class="btn btn-primary" id="btn-konfirmasi-bantuan">Konfirmasi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p id="footer-school-name" class="footer-school-name">Nama Sekolah Anda</p>
+            <p id="footer-school-address" class="footer-school-address">Alamat Sekolah</p>
+            <div class="social-icons mb-2">
+                <a href="#" class="facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="youtube" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <small>&copy; Kenji Studio Developer 2025.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js Library untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- SheetJS (XLSX) Library for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Skrip Global dan Skrip Halaman -->
+    <script src="global.js"></script>
+    <script>
+        const bantuanModal = new bootstrap.Modal(document.getElementById('bantuanModal'));
+        const formBantuan = document.getElementById('form-bantuan');
+
+        // Variabel global untuk menyimpan data bantuan yang sedang ditampilkan
+        let currentBantuanData = [];
+
+        // Variabel global untuk menyimpan instance chart
+        let jenisBantuanChartInstance;
+        let tahunBantuanChartInstance;
+        let kelasBantuanChartInstance;
+
+        // --- Fungsi Spesifik Halaman Bantuan ---
+
+        // Fungsi untuk mengisi dropdown Kelas dan Jurusan
+        async function populateDropdowns() {
+            const kelasSelect = document.getElementById('kelas');
+            const jurusanSelect = document.getElementById('jurusan');
+            kelasSelect.innerHTML = '<option value="">Memuat...</option>';
+            jurusanSelect.innerHTML = '<option value="">Memuat...</option>';
+
+            try {
+                // 1. Ambil semua data dari tabel pengaturan
+                const { data, error } = await supabaseClient
+                    .from('tabelpengaturan')
+                    .select('kelas, jurusan');
+
+                if (error) throw error;
+
+                // 2. Proses untuk mendapatkan nilai unik (distinct)
+                const uniqueKelas = [...new Set(data.map(item => item.kelas).filter(Boolean))].sort();
+                const uniqueJurusan = [...new Set(data.map(item => item.jurusan).filter(Boolean))].sort();
+
+                // 3. Isi dropdown Kelas
+                kelasSelect.innerHTML = '<option value="">Pilih Kelas...</option>';
+                uniqueKelas.forEach(kelas => {
+                    kelasSelect.innerHTML += `<option value="${kelas}">${kelas}</option>`;
+                });
+
+                // 4. Isi dropdown Jurusan
+                jurusanSelect.innerHTML = '<option value="">Pilih Jurusan...</option>';
+                uniqueJurusan.forEach(jurusan => {
+                    jurusanSelect.innerHTML += `<option value="${jurusan}">${jurusan}</option>`;
+                });
+
+            } catch (error) {
+                console.error('Gagal memuat data dropdown:', error);
+                kelasSelect.innerHTML = '<option value="">Gagal memuat</option>';
+                jurusanSelect.innerHTML = '<option value="">Gagal memuat</option>';
+            }
+        }
+
+        // Fungsi untuk menghitung dan menampilkan rekap data bantuan
+        function updateBantuanRekap(bantuanData) {
+            const rekapJumlahList = document.getElementById('rekap-jumlah-list');
+            const rekapJenisList = document.getElementById('rekap-jenis-list');
+            const rekapKelasList = document.getElementById('rekap-kelas-list');
+            const rekapTahunList = document.getElementById('rekap-tahun-list');
+
+            rekapJumlahList.innerHTML = '';
+            rekapJenisList.innerHTML = '';
+            rekapKelasList.innerHTML = '';
+            rekapTahunList.innerHTML = '';
+
+            if (bantuanData.length === 0) {
+                rekapJumlahList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                rekapJenisList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                rekapKelasList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                rekapTahunList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                return;
+            }
+
+            rekapJumlahList.innerHTML = `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Total Penerima <span class="badge bg-primary rounded-pill">${bantuanData.length}</span>
+                </li>
+            `;
+
+            const countFrequency = (arr, key) => {
+                return arr.reduce((acc, item) => {
+                    const value = item[key] || 'Tidak Diisi';
+                    acc[value] = (acc[value] || 0) + 1;
+                    return acc;
+                }, {});
+            };
+
+            const renderList = (element, data, colorPalette) => {
+                const sortedKeys = Object.keys(data).sort((a, b) => data[b] - data[a]);
+                sortedKeys.forEach((key, index) => {
+                    const value = data[key];
+                    const badgeColor = colorPalette[index % colorPalette.length];
+                    element.innerHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${key} <span class="badge ${badgeColor} rounded-pill">${value}</span>
+                        </li>`;
+                });
+            };
+
+            const JENIS_COLORS = ['bg-success', 'bg-info text-dark', 'bg-warning text-dark', 'bg-danger', 'bg-primary', 'bg-dark'];
+            const TAHUN_COLORS = ['bg-info text-dark', 'bg-secondary', 'bg-primary', 'bg-success', 'bg-warning text-dark'];
+            const KELAS_COLORS = ['bg-warning text-dark', 'bg-primary', 'bg-danger', 'bg-success', 'bg-info text-dark', 'bg-dark'];
+
+            renderList(rekapJenisList, countFrequency(bantuanData, 'jenis_bantuan'), JENIS_COLORS);
+            renderList(rekapTahunList, countFrequency(bantuanData, 'tahun'), TAHUN_COLORS);
+            renderList(rekapKelasList, countFrequency(bantuanData, 'kelas'), KELAS_COLORS);
+        }
+
+        // Fungsi untuk membuat atau memperbarui diagram pai (pie chart)
+        function renderPieChart(canvasId, chartInstance, labels, data, title) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            return new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: [
+                            'rgba(0, 74, 153, 0.8)', 'rgba(255, 193, 7, 0.8)', 'rgba(40, 167, 69, 0.8)',
+                            'rgba(220, 53, 69, 0.8)', 'rgba(23, 162, 184, 0.8)', 'rgba(108, 117, 125, 0.8)'
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 0.7)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: true, text: title, font: { size: 16 } }
+                    }
+                }
+            });
+        }
+
+        // Fungsi untuk memuat data bantuan
+        async function loadBantuan(searchTerm = '') {
+            const bantuanTableBody = document.getElementById('bantuan-table-body');
+            bantuanTableBody.innerHTML = `<tr><td colspan="11" class="text-center"><span class="spinner-border spinner-border-sm"></span> Memuat data...</td></tr>`;
+
+            let query = supabaseClient.from('tabelbantuan').select('*');
+
+            if (searchTerm) {
+                const searchPattern = `%${searchTerm}%`;
+                let filters = [
+                    `nama_siswa.ilike.${searchPattern}`,
+                    `nisn.ilike.${searchPattern}`,
+                    `jenis_bantuan.ilike.${searchPattern}`,
+                    `kelas.ilike.${searchPattern}`,
+                    `jurusan.ilike.${searchPattern}`
+                ];
+                if (!isNaN(searchTerm) && !isNaN(parseFloat(searchTerm))) {
+                    filters.push(`tahun.eq.${searchTerm}`);
+                }
+                query = query.or(filters.join(','));
+            }
+
+            const { data, error } = await query.order('tahun', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching bantuan:', error);
+                bantuanTableBody.innerHTML = `<tr><td colspan="11" class="text-center text-danger">Gagal memuat data. Pastikan tabel 'tabelbantuan' ada.</td></tr>`;
+                updateBantuanRekap([]);
+                currentBantuanData = [];
+                return;
+            }
+
+            currentBantuanData = data;
+            updateBantuanRekap(data);
+
+            // Update Chart
+            const jenisData = currentBantuanData.reduce((acc, item) => { const key = item.jenis_bantuan || 'Lainnya'; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+            const tahunData = currentBantuanData.reduce((acc, item) => { const key = item.tahun || 'Tanpa Tahun'; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+            const kelasData = currentBantuanData.reduce((acc, item) => { const key = item.kelas || 'Tanpa Kelas'; acc[key] = (acc[key] || 0) + 1; return acc; }, {});
+
+            jenisBantuanChartInstance = renderPieChart('jenisBantuanPieChart', jenisBantuanChartInstance, Object.keys(jenisData), Object.values(jenisData), 'Bantuan Berdasarkan Jenis');
+            
+            const sortedTahunKeys = Object.keys(tahunData).sort((a, b) => b - a);
+            const sortedTahunValues = sortedTahunKeys.map(key => tahunData[key]);
+            tahunBantuanChartInstance = renderPieChart('tahunBantuanPieChart', tahunBantuanChartInstance, sortedTahunKeys, sortedTahunValues, 'Bantuan Berdasarkan Tahun');
+
+            kelasBantuanChartInstance = renderPieChart('kelasBantuanPieChart', kelasBantuanChartInstance, Object.keys(kelasData), Object.values(kelasData), 'Bantuan Berdasarkan Kelas');
+            
+            if (data.length === 0) {
+                bantuanTableBody.innerHTML = `<tr><td colspan="11" class="text-center">Belum ada data bantuan.</td></tr>`;
+                return;
+            }
+
+            bantuanTableBody.innerHTML = '';
+            data.forEach((bantuan, index) => {
+                const berkasLink = bantuan.photo ? `<a href="${bantuan.photo}" target="_blank" class="btn btn-sm btn-action btn-view-berkas"><i class="fas fa-file-alt pe-none"></i></a>` : 'Tidak Ada';
+
+                const row = `
+                    <tr>
+                        <th>${index + 1}</th>
+                        <td>${bantuan.nama_siswa || '-'}</td>
+                        <td>${bantuan.nisn || '-'}</td>
+                        <td>${bantuan.kelas || '-'}</td>
+                        <td>${bantuan.jurusan || '-'}</td>
+                        <td>${bantuan.jenis_bantuan || '-'}</td>
+                        <td>${bantuan.tahun || '-'}</td>
+                        <td>${bantuan.tanggal_diterima || '-'}</td>
+                        <td>${bantuan.besaran_bantuan || '-'}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-action btn-edit me-2" data-id="${bantuan.id}" title="Edit"><i class="fas fa-edit pe-none"></i></button>
+                            <button class="btn btn-sm btn-action btn-delete" data-id="${bantuan.id}" title="Hapus"><i class="fas fa-trash pe-none"></i></button>
+                        </td>
+                        <td class="text-center">${berkasLink}</td>
+                    </tr>
+                `;
+                bantuanTableBody.innerHTML += row;
+            });
+        }
+
+        // Event listener untuk membersihkan form saat modal dibuka
+        document.getElementById('bantuanModal').addEventListener('show.bs.modal', () => {
+            if (!document.getElementById('bantuan-id').value) {
+                document.getElementById('form-bantuan').reset();
+                document.getElementById('bantuanModalLabel').textContent = 'Tambah Data Bantuan';
+                document.getElementById('btn-konfirmasi-bantuan').classList.remove('d-none');
+                document.getElementById('btn-update-bantuan').classList.add('d-none');
+                document.getElementById('btn-delete-bantuan').classList.add('d-none');
+                document.getElementById('current-berkas-link').innerHTML = '';
+            }
+        });
+
+        document.getElementById('bantuanModal').addEventListener('hidden.bs.modal', () => {
+            document.getElementById('bantuan-id').value = '';
+            document.getElementById('form-bantuan').reset();
+        });
+
+        // --- FUNGSI CREATE, UPDATE, DELETE (CRUD) ---
+
+        formBantuan.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const btnKonfirmasi = document.getElementById('btn-konfirmasi-bantuan');
+            btnKonfirmasi.disabled = true;
+            btnKonfirmasi.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+            const berkasFile = document.getElementById('upload_berkas').files[0];
+            let berkasUrl = null;
+
+            if (berkasFile) {
+                const maxSize = 1 * 1024 * 1024; // 1MB
+                if (berkasFile.size > maxSize) {
+                    alert('Ukuran file tidak boleh melebihi 1MB.');
+                    btnKonfirmasi.disabled = false;
+                    btnKonfirmasi.innerHTML = 'Konfirmasi';
+                    document.getElementById('upload_berkas').value = ''; // Hapus file yang dipilih
+                    return;
+                }
+
+                const filePath = `berkas-bantuan/${Date.now()}-${berkasFile.name}`;
+                const { error: uploadError } = await supabaseClient.storage.from('aset').upload(filePath, berkasFile);
+
+                if (uploadError) {
+                    alert('Gagal mengunggah berkas: ' + uploadError.message);
+                    btnKonfirmasi.disabled = false;
+                    btnKonfirmasi.innerHTML = 'Konfirmasi';
+                    return;
+                }
+                const { data: urlData } = supabaseClient.storage.from('aset').getPublicUrl(filePath);
+                berkasUrl = urlData.publicUrl;
+            }
+
+            const bantuanData = {
+                nama_siswa: document.getElementById('nama_siswa').value,
+                nisn: document.getElementById('nisn').value,
+                kelas: document.getElementById('kelas').value,
+                jurusan: document.getElementById('jurusan').value,
+                jenis_bantuan: document.getElementById('jenis_bantuan').value,
+                tahun: document.getElementById('tahun').value,
+                besaran_bantuan: document.getElementById('besaran_bantuan').value,
+                tanggal_diterima: document.getElementById('tanggal_penerimaan').value || null, // Nama kolom di DB adalah tanggal_diterima
+                photo: berkasUrl
+            };
+
+            const { error } = await supabaseClient.from('tabelbantuan').insert([bantuanData]);
+
+            if (error) {
+                alert('Gagal menyimpan data bantuan: ' + error.message);
+            } else {
+                alert('Data bantuan berhasil ditambahkan!');
+                bantuanModal.hide();
+                await loadBantuan();
+            }
+
+            btnKonfirmasi.disabled = false;
+            btnKonfirmasi.innerHTML = 'Konfirmasi';
+        });
+
+        document.getElementById('bantuan-table-body').addEventListener('click', async (event) => {
+            const target = event.target.closest('button');
+            if (!target) return;
+
+            const bantuanId = target.dataset.id;
+
+            if (target.classList.contains('btn-edit')) {
+                const { data, error } = await supabaseClient.from('tabelbantuan').select('*').eq('id', bantuanId).single();
+                if (error) {
+                    alert('Gagal mengambil data bantuan untuk diedit.');
+                    return;
+                }
+
+                document.getElementById('bantuan-id').value = data.id;
+                document.getElementById('nama_siswa').value = data.nama_siswa;
+                document.getElementById('nisn').value = data.nisn || '';
+                document.getElementById('kelas').value = data.kelas || '';
+                document.getElementById('jurusan').value = data.jurusan || '';
+                document.getElementById('jenis_bantuan').value = data.jenis_bantuan || '';
+                document.getElementById('tahun').value = data.tahun || '';
+                document.getElementById('besaran_bantuan').value = data.besaran_bantuan || '';
+                document.getElementById('tanggal_penerimaan').value = data.tanggal_diterima || ''; // Nama kolom di DB adalah tanggal_diterima
+
+                const currentBerkasLink = document.getElementById('current-berkas-link');
+                if (data.photo) {
+                    currentBerkasLink.innerHTML = `Berkas saat ini: <a href="${data.photo}" target="_blank">Lihat Berkas</a>`;
+                } else {
+                    currentBerkasLink.innerHTML = '<em>Tidak ada berkas terlampir.</em>';
+                }
+
+                // --- LOGIKA KONTROL AKSES TOMBOL ---
+                const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+                const btnUpdate = document.getElementById('btn-update-bantuan');
+                const btnDelete = document.getElementById('btn-delete-bantuan');
+
+                if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+                    btnUpdate.classList.remove('d-none');
+                    btnDelete.classList.remove('d-none');
+                } else {
+                    btnUpdate.classList.add('d-none');
+                    btnDelete.classList.add('d-none');
+                }
+
+                document.getElementById('bantuanModalLabel').textContent = 'Update Data Bantuan';
+                document.getElementById('btn-konfirmasi-bantuan').classList.add('d-none');
+
+                bantuanModal.show();
+            }
+
+            if (target.classList.contains('btn-delete')) {
+                const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+                if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+                    if (confirm('Apakah Anda yakin ingin menghapus data bantuan ini?')) {
+                        await deleteBantuanById(bantuanId);
+                    }
+                } else {
+                    alert('Maaf, fitur hapus data hanya dapat di akses oleh Admin Utama.');
+                }
+            }
+        });
+
+        document.getElementById('btn-update-bantuan').addEventListener('click', async () => {
+            const bantuanId = document.getElementById('bantuan-id').value;
+            if (!bantuanId) return;
+
+            const berkasFile = document.getElementById('upload_berkas').files[0];
+            let newBerkasUrl = null;
+
+            if (berkasFile) {
+                const maxSize = 1 * 1024 * 1024; // 1MB
+                if (berkasFile.size > maxSize) {
+                    alert('Ukuran file tidak boleh melebihi 1MB.');
+                    document.getElementById('upload_berkas').value = ''; // Hapus file yang dipilih
+                    return;
+                }
+
+                // Di sini Anda bisa menambahkan logika untuk menghapus file lama jika ada
+                const filePath = `berkas-bantuan/${Date.now()}-${berkasFile.name}`;
+                const { error: uploadError } = await supabaseClient.storage.from('aset').upload(filePath, berkasFile);
+
+                if (uploadError) {
+                    alert('Gagal mengunggah berkas baru: ' + uploadError.message);
+                    return;
+                }
+                const { data: urlData } = supabaseClient.storage.from('aset').getPublicUrl(filePath);
+                newBerkasUrl = urlData.publicUrl;
+            }
+
+            const updatedData = {
+                nama_siswa: document.getElementById('nama_siswa').value,
+                nisn: document.getElementById('nisn').value,
+                kelas: document.getElementById('kelas').value,
+                jurusan: document.getElementById('jurusan').value,
+                jenis_bantuan: document.getElementById('jenis_bantuan').value,
+                tahun: document.getElementById('tahun').value,
+                besaran_bantuan: document.getElementById('besaran_bantuan').value,
+                tanggal_diterima: document.getElementById('tanggal_penerimaan').value || null, // Nama kolom di DB adalah tanggal_diterima
+            };
+
+            // Hanya tambahkan properti photo jika ada file baru yang diunggah
+            if (newBerkasUrl) {
+                updatedData.photo = newBerkasUrl;
+            }
+
+            const { error } = await supabaseClient.from('tabelbantuan').update(updatedData).eq('id', bantuanId);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data bantuan berhasil diupdate!');
+                bantuanModal.hide();
+                await loadBantuan();
+            }
+        });
+
+        document.getElementById('btn-delete-bantuan').addEventListener('click', async () => {
+            const bantuanId = document.getElementById('bantuan-id').value;
+            if (!bantuanId) return;
+
+            const loggedInUserJSON = localStorage.getItem('loggedInUser');
+            if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+                if (confirm('Apakah Anda yakin ingin menghapus data bantuan ini?')) {
+                    await deleteBantuanById(bantuanId);
+                }
+            } else {
+                // Pengaman tambahan jika tombol terlihat oleh user biasa
+                alert('Maaf, fitur hapus data hanya dapat di akses oleh Admin Utama.');
+            }
+        });
+
+        async function deleteBantuanById(id) {
+            // 1. Ambil data untuk mendapatkan URL berkas sebelum dihapus
+            const { data: bantuan, error: fetchError } = await supabaseClient
+                .from('tabelbantuan')
+                .select('photo')
+                .eq('id', id)
+                .single();
+
+            if (fetchError) {
+                alert('Gagal memverifikasi data untuk dihapus: ' + fetchError.message);
+                return;
+            }
+
+            // 2. Hapus berkas dari storage jika ada
+            if (bantuan && bantuan.photo) {
+                const filePath = bantuan.photo.split('/aset/')[1];
+                await supabaseClient.storage.from('aset').remove([filePath]);
+            }
+
+            const { error } = await supabaseClient.from('tabelbantuan').delete().eq('id', id);
+
+            if (error) {
+                alert('Gagal menghapus data: ' + error.message);
+            } else {
+                alert('Data bantuan berhasil dihapus.');
+                bantuanModal.hide();
+                await loadBantuan();
+            }
+        }
+
+        // Event Listener Utama
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            loadSchoolIdentity();
+            populateLoginUsernames();
+            populateDropdowns(); // Memuat data kelas dan jurusan ke dalam modal
+            loadBantuan();
+
+            // --- LOGIKA BARU UNTUK TOMBOL TAMBAH BANTUAN ---
+            document.getElementById('btn-tambah-bantuan').addEventListener('click', function(event) {
+                const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+                
+                if (!loggedInUserJSON) { // Jika BELUM login, tampilkan modal notifikasi.
+                    const loginRequiredModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                    loginRequiredModal.show();
+                } else {
+                    // Jika SUDAH login, periksa perannya.
+                    const userData = JSON.parse(loggedInUserJSON);
+                    if (userData.role === 'superadmin') {
+                        // Jika superadmin, buka modal tambah data
+                        bantuanModal.show();
+                    } else {
+                        // Jika perannya bukan superadmin, tampilkan alert.
+                        alert('Maaf, fitur tambah data hanya dapat di akses oleh Admin Utama.');
+                    }
+                }
+            });
+
+            document.getElementById('refresh-rekap-button').addEventListener('click', async () => {
+                const refreshButton = document.getElementById('refresh-rekap-button');
+                const icon = refreshButton.querySelector('i');
+                refreshButton.disabled = true;
+                icon.classList.add('fa-spin');
+                await loadBantuan(searchInput.value.trim());
+                refreshButton.disabled = false;
+                icon.classList.remove('fa-spin');
+            });
+
+            document.getElementById('btn-export-excel').addEventListener('click', () => {
+                const exportButton = document.getElementById('btn-export-excel');
+                const originalHtml = exportButton.innerHTML;
+                
+                exportButton.disabled = true;
+                exportButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
+
+                try {
+                    if (currentBantuanData.length === 0) {
+                        alert('Tidak ada data untuk di-export.');
+                        return;
+                    }
+
+                    const dataToExport = currentBantuanData.map((bantuan, index) => ({
+                        'No': index + 1,
+                        'Nama Siswa': bantuan.nama_siswa,
+                        'NISN': bantuan.nisn,
+                        'Kelas': bantuan.kelas,
+                        'Jurusan': bantuan.jurusan,
+                        'Jenis Bantuan': bantuan.jenis_bantuan,
+                        'Tahun': bantuan.tahun,
+                        'Besaran Bantuan': bantuan.besaran_bantuan,
+                        'Tanggal Penerimaan': bantuan.tanggal_diterima, // Nama kolom di DB adalah tanggal_diterima
+                        'Link Berkas': bantuan.photo,
+                    }));
+
+                    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+                    const workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Bantuan");
+
+                    XLSX.writeFile(workbook, "Data_Bantuan_Pendidikan_Siswa.xlsx");
+                } finally {
+                    exportButton.disabled = false;
+                    exportButton.innerHTML = originalHtml;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

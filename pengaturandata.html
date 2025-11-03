@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan Data - Manajemen Sistem Kesiswaan</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-color: #e0e5ec; /* Warna latar belakang utama untuk efek 3D */
+            --primary-blue: #007bff; /* Warna tombol/highlight default */
+            --dark-text: #343a40;
+            /* Bayangan untuk efek 3D menonjol */
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --protruding-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            --inset-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            --widget-radius: 18px; /* Sudut membulat yang lebih besar */
+        }
+
+        /* Reset dan Layout Dasar */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color); 
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: 80px; /* Memberi ruang untuk navbar fixed-top */
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: var(--bg-color) !important;
+            box-shadow: var(--protruding-shadow);
+            color: var(--dark-text);
+        }
+        .navbar-brand strong {
+            color: var(--dark-text);
+        }
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            box-shadow: var(--protruding-shadow);
+            object-fit: cover;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .navbar-toggler:hover, .navbar-toggler:focus {
+            box-shadow: var(--inset-shadow);
+            outline: none;
+        }
+
+        /* Offcanvas Menu Styling */
+        .offcanvas.offcanvas-end {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+        }
+        .navbar-toggler:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .offcanvas-header {
+            background-color: var(--bg-color); 
+            border-bottom: 1px solid var(--shadow-dark);
+            color: var(--dark-text);
+        }
+
+        .user-card {
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .user-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: var(--protruding-shadow);
+            padding: 5px;
+            background-color: var(--bg-color);
+        }
+
+        .user-card .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .user-card .btn, .user-card .btn-login {
+            box-shadow: var(--protruding-shadow);
+            border: none;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card .btn:hover, .user-card .btn-login:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .user-card #logout-button {
+            color: #dc3545;
+        }
+
+        .offcanvas-body .nav-link {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            padding-left: 1.5rem; /* DIGESER: Memberi jarak dari tepi kiri */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .offcanvas-body .nav-link i {
+            margin-right: 0.75rem; /* DIGESER: Jarak antara ikon dan teks */
+            width: 20px; /* Pastikan ikon punya lebar tetap agar rapi */
+            text-align: center;
+        }
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link:focus {
+            box-shadow: var(--inset-shadow);
+            transform: translateY(2px);
+        }
+        .offcanvas-body .nav-link.active {
+            color: var(--primary-blue); 
+            box-shadow: var(--inset-shadow);
+            font-weight: 600;
+        }
+
+        /* Footer Styling */
+        .footer {
+            padding: 2rem 0;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow); 
+        }
+        .footer-school-name, .footer-school-address {
+            color: var(--dark-text);
+        }
+        .footer .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            font-size: 1.4rem;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .footer .social-icons a:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Custom Page Styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+            margin-bottom: 2rem !important;
+            text-align: center;
+        }
+        .accordion {
+            background-color: var(--bg-color);
+            border-radius: var(--widget-radius);
+            box-shadow: var(--protruding-shadow);
+            padding: 1rem;
+            border: none;
+        }
+        .accordion-item {
+            background-color: transparent;
+            border: none;
+        }
+        .accordion-button {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            border-radius: 12px !important;
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .accordion-button:not(.collapsed) {
+            box-shadow: var(--inset-shadow);
+            background-color: var(--bg-color);
+            color: var(--primary-blue);
+        }
+        .accordion-button:focus {
+            box-shadow: var(--inset-shadow);
+        }
+        .accordion-button::after {
+            filter: brightness(0) saturate(100%) invert(20%) sepia(6%) saturate(1039%) hue-rotate(170deg) brightness(93%) contrast(89%);
+        }
+        .accordion-body {
+            padding: 1.5rem;
+        }
+        .form-control, .form-select {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: var(--inset-shadow), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .input-group .btn {
+            border: none;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+        }
+        .input-group .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .input-group .btn-primary { color: var(--primary-blue); }
+        .input-group .btn-warning { color: #ffc107; }
+        .input-group .btn-danger { color: #dc3545; }
+        .table {
+            background-color: transparent;
+        }
+        .table thead {
+            border-bottom: 2px solid var(--shadow-dark);
+        }
+        .table th {
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        .clickable-row:hover {
+            cursor: pointer;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="logo.png" alt="Logo Sekolah" class="me-2">
+                    <strong>Manajemen Kesiswaan</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" title="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu Utama</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="user-card p-3 text-center">
+                <img id="user-avatar" src="logo.png" alt="Foto User">
+                <div id="user-info" class="d-none mt-3">
+                    <div class="user-name mb-3">Nama Pengguna</div>
+                    <a href="#" id="logout-button" class="btn btn-sm">Logout</a>
+                </div>
+                <div id="login-prompt" class="mt-3">
+                    <button type="button" class="btn btn-sm btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+            </div>
+            <ul class="navbar-nav justify-content-end flex-grow-1 p-3">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-home"></i> Beranda</a></li>
+                <li id="admin-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturanadmin.html"><i class="fa-solid fa-user-shield"></i> Pengaturan Administrator</a></li>
+                <li id="identitas-sekolah-menu-item" class="nav-item d-none"><a class="nav-link" href="identitas.html"><i class="fa-solid fa-school"></i> Identitas Sekolah</a></li>
+                <li id="profil-waka-menu-item" class="nav-item d-none"><a class="nav-link" href="wakasis.html"><i class="fa-solid fa-user-tie"></i> Profil Waka Kesiswaan</a></li>
+                <li id="pengaturan-data-menu-item" class="nav-item d-none"><a class="nav-link active" href="pengaturandata.html"><i class="fa-solid fa-database"></i> Pengaturan Data</a></li>
+                <li class="nav-item"><a class="nav-link" href="datasiswa.html"><i class="fa-solid fa-users"></i> Data Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="prestasi.html"><i class="fa-solid fa-trophy"></i> Prestasi Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="bantuan.html"><i class="fa-solid fa-hand-holding-heart"></i> Bantuan Pendidikan</a></li>
+                <li class="nav-item"><a class="nav-link" href="putussekolah.html"><i class="fa-solid fa-user-slash"></i> Putus Sekolah</a></li>
+                <li class="nav-item"><a class="nav-link" href="mutasi.html"><i class="fa-solid fa-right-left"></i> Mutasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="pembinaan.html"><i class="fa-solid fa-chalkboard-user"></i> Pembinaan Guru/Walas/BK</a></li>
+                <li class="nav-item"><a class="nav-link" href="pemanggilan.html"><i class="fa-solid fa-print"></i> Cetak Berkas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Pengaturan Data Aplikasi</h1>
+
+        <div class="accordion" id="accordionPengaturanData">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingKelas">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKelas" aria-expanded="true" aria-controls="collapseKelas">
+                        <i class="fa-solid fa-school-flag me-2"></i> Data Kelas
+                    </button>
+                </h2>
+                <div id="collapseKelas" class="accordion-collapse collapse show" aria-labelledby="headingKelas" data-bs-parent="#accordionPengaturanData">
+                    <div class="accordion-body">
+                        <!-- Form Input dan Tombol Aksi -->
+                        <form id="form-kelas" class="mb-4">
+                            <label for="nama-kelas-input" class="form-label">Nama Kelas</label>
+                            <div class="input-group">
+                                <input type="text" id="nama-kelas-input" class="form-control" placeholder="Contoh: X, XI, atau XII" required>
+                                <button class="btn btn-primary" type="submit" id="btn-tambah-kelas">
+                                    <i class="fas fa-plus me-1"></i> Tambah
+                                </button>
+                                <button class="btn btn-warning" type="button" id="btn-update-kelas">Update</button>
+                                <button class="btn btn-danger" type="button" id="btn-delete-kelas">Delete</button>
+                            </div>
+                            <input type="hidden" id="kelas-id">
+                        </form>
+
+                            </button>
+
+                        <!-- Tabel untuk Menampilkan Data Kelas -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">#</th>
+                                        <th scope="col" colspan="2">Nama Kelas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kelas-table-body">
+                                    <!-- Data akan dimuat di sini oleh JavaScript -->
+                                    <tr>
+                                        <td colspan="3" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingJurusan">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJurusan" aria-expanded="false" aria-controls="collapseJurusan">
+                        <i class="fa-solid fa-sitemap me-2"></i> Data Jurusan
+                    </button>
+                </h2>
+                <div id="collapseJurusan" class="accordion-collapse collapse" aria-labelledby="headingJurusan" data-bs-parent="#accordionPengaturanData">
+                    <div class="accordion-body">
+                        <!-- Form Input dan Tombol Aksi untuk Jurusan -->
+                        <form id="form-jurusan" class="mb-4">
+                            <label for="nama-jurusan-input" class="form-label">Nama Jurusan</label>
+                            <div class="input-group">
+                                <input type="text" id="nama-jurusan-input" class="form-control" placeholder="Contoh: Teknik Komputer dan Jaringan" required>
+                                <button class="btn btn-primary" type="submit" id="btn-tambah-jurusan">
+                                    <i class="fas fa-plus me-1"></i> Tambah
+                                </button>
+                                <button class="btn btn-warning" type="button" id="btn-update-jurusan">Update</button>
+                                <button class="btn btn-danger" type="button" id="btn-delete-jurusan">Delete</button>
+                            </div>
+                            <input type="hidden" id="jurusan-id">
+                        </form>
+
+                        <!-- Tabel untuk Menampilkan Data Jurusan -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">#</th>
+                                        <th scope="col" colspan="2">Nama Jurusan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="jurusan-table-body">
+                                    <!-- Data akan dimuat di sini oleh JavaScript -->
+                                    <tr>
+                                        <td colspan="3" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingWalikelas">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWalikelas" aria-expanded="false" aria-controls="collapseWalikelas">
+                        <i class="fa-solid fa-user-tie me-2"></i> Walikelas
+                    </button>
+                </h2>
+                <div id="collapseWalikelas" class="accordion-collapse collapse" aria-labelledby="headingWalikelas" data-bs-parent="#accordionPengaturanData">
+                    <div class="accordion-body">
+                        <!-- Form Input dan Tombol Aksi untuk Walikelas -->
+                        <form id="form-walikelas" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nama-walikelas-input" class="form-label">Nama Walikelas</label>
+                                    <input type="text" id="nama-walikelas-input" class="form-control" placeholder="Contoh: Budi Santoso, S.Pd." required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nip-walikelas-input" class="form-label">NIP Walikelas</label>
+                                    <input type="text" id="nip-walikelas-input" class="form-control" placeholder="NIP (jika ada)">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <button class="btn btn-primary" type="submit" id="btn-tambah-walikelas">
+                                    <i class="fas fa-plus me-1"></i> Tambah
+                                </button>
+                                <button class="btn btn-warning" type="button" id="btn-update-walikelas">Update</button>
+                                <button class="btn btn-danger" type="button" id="btn-delete-walikelas">Delete</button>
+                            </div>
+                            <input type="hidden" id="walikelas-id">
+                        </form>
+
+                        <!-- Tabel untuk Menampilkan Data Walikelas -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 5%;">#</th>
+                                        <th scope="col">Nama Walikelas</th>
+                                        <th scope="col">NIP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="walikelas-table-body">
+                                    <!-- Data akan dimuat di sini oleh JavaScript -->
+                                    <tr>
+                                        <td colspan="3" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingMapel">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMapel" aria-expanded="false" aria-controls="collapseMapel">
+                        <i class="fa-solid fa-book me-2"></i> Mata Pelajaran
+                    </button>
+                </h2>
+                <div id="collapseMapel" class="accordion-collapse collapse" aria-labelledby="headingMapel" data-bs-parent="#accordionPengaturanData">
+                    <div class="accordion-body">
+                        <!-- Form Input dan Tombol Aksi untuk Mapel -->
+                        <form id="form-mapel" class="mb-4">
+                            <label for="nama-mapel-input" class="form-label">Nama Mata Pelajaran</label>
+                            <div class="input-group">
+                                <input type="text" id="nama-mapel-input" class="form-control" placeholder="Contoh: Matematika" required>
+                                <button class="btn btn-primary" type="submit" id="btn-tambah-mapel">
+                                    <i class="fas fa-plus me-1"></i> Tambah
+                                </button>
+                                <button class="btn btn-warning" type="button" id="btn-update-mapel">Update</button>
+                                <button class="btn btn-danger" type="button" id="btn-delete-mapel">Delete</button>
+                            </div>
+                            <input type="hidden" id="mapel-id">
+                        </form>
+
+                        <!-- Tabel untuk Menampilkan Data Mapel -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">#</th>
+                                        <th scope="col" colspan="2">Nama Mata Pelajaran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mapel-table-body">
+                                    <!-- Data akan dimuat di sini oleh JavaScript -->
+                                    <tr>
+                                        <td colspan="3" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingGuru">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGuru" aria-expanded="false" aria-controls="collapseGuru">
+                        <i class="fa-solid fa-person-chalkboard me-2"></i> Data Guru
+                    </button>
+                </h2>
+                <div id="collapseGuru" class="accordion-collapse collapse" aria-labelledby="headingGuru" data-bs-parent="#accordionPengaturanData">
+                    <div class="accordion-body">
+                        <!-- Form Input dan Tombol Aksi untuk Guru -->
+                        <form id="form-guru" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nama-guru-input" class="form-label">Nama Guru</label>
+                                    <input type="text" id="nama-guru-input" class="form-control" placeholder="Contoh: Siti Aminah, S.Kom." required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nip-guru-input" class="form-label">NIP Guru</label>
+                                    <input type="text" id="nip-guru-input" class="form-control" placeholder="NIP (jika ada)">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <button class="btn btn-primary" type="submit" id="btn-tambah-guru">
+                                    <i class="fas fa-plus me-1"></i> Tambah
+                                </button>
+                                <button class="btn btn-warning" type="button" id="btn-update-guru">Update</button>
+                                <button class="btn btn-danger" type="button" id="btn-delete-guru">Delete</button>
+                            </div>
+                            <input type="hidden" id="guru-id">
+                        </form>
+
+                        <!-- Tabel untuk Menampilkan Data Guru -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col" style="width: 5%;">#</th>
+                                        <th scope="col">Nama Guru</th>
+                                        <th scope="col">NIP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="guru-table-body">
+                                    <!-- Data akan dimuat di sini oleh JavaScript -->
+                                    <tr>
+                                        <td colspan="3" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal (Disalin dari index.html) -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login Administrator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">
+                        Username atau password salah.
+                    </div>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Username</label>
+                            <select class="form-select" id="login-username" required autocomplete="username">
+                                <option value="" selected disabled>Pilih username...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Tampilkan/Sembunyikan password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" form="login-form" class="btn btn-primary" id="login-button">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal tidak lagi digunakan untuk Data Kelas -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p id="footer-school-name" class="footer-school-name">Nama Sekolah Anda</p>
+            <p id="footer-school-address" class="footer-school-address">Alamat Sekolah</p>
+            <div class="social-icons mb-2">
+                <a href="#" class="facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="youtube" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <small>&copy; Kenji Studio Developer 2025.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Skrip Global dan Skrip Halaman -->
+    <script src="global.js"></script>
+    <script>
+        // Variabel UI untuk Data Kelas
+        const formKelas = document.getElementById('form-kelas');
+        const inputNamaKelas = document.getElementById('nama-kelas-input');
+        const inputKelasId = document.getElementById('kelas-id');
+        const kelasTableBody = document.getElementById('kelas-table-body');
+
+        // Variabel UI untuk Data Jurusan
+        const formJurusan = document.getElementById('form-jurusan');
+        const inputNamaJurusan = document.getElementById('nama-jurusan-input');
+        const inputJurusanId = document.getElementById('jurusan-id');
+        const jurusanTableBody = document.getElementById('jurusan-table-body');
+
+        // Variabel UI untuk Data Walikelas
+        const formWalikelas = document.getElementById('form-walikelas');
+        const inputNamaWalikelas = document.getElementById('nama-walikelas-input');
+        const inputNipWalikelas = document.getElementById('nip-walikelas-input');
+        const inputWalikelasId = document.getElementById('walikelas-id');
+        const walikelasTableBody = document.getElementById('walikelas-table-body');
+
+        // Variabel UI untuk Data Mata Pelajaran
+        const formMapel = document.getElementById('form-mapel');
+        const inputNamaMapel = document.getElementById('nama-mapel-input');
+        const inputMapelId = document.getElementById('mapel-id');
+        const mapelTableBody = document.getElementById('mapel-table-body');
+
+        // Variabel UI untuk Data Guru
+        const formGuru = document.getElementById('form-guru');
+        const inputNamaGuru = document.getElementById('nama-guru-input');
+        const inputNipGuru = document.getElementById('nip-guru-input');
+        const inputGuruId = document.getElementById('guru-id');
+        const guruTableBody = document.getElementById('guru-table-body');
+
+        // Fungsi ini sekarang hanya memeriksa, tidak mengarahkan. Pengarahan dilakukan di global.js jika perlu.
+        function checkAccess() {
+            const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+            const userData = loggedInUserJSON ? JSON.parse(loggedInUserJSON) : null;
+            if (!userData || userData.role !== 'superadmin') {
+                alert('Anda harus login untuk mengakses halaman ini.');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // --- FUNGSI CRUD UNTUK DATA KELAS ---
+
+        // 1. READ: Memuat data kelas dari Supabase dan menampilkannya di tabel
+        async function loadKelas() {
+            kelasTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Memuat data...</td></tr>';
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('id, kelas')
+                .not('kelas', 'is', null) // Kunci: Hanya ambil baris yang kolom kelas-nya tidak null
+                .order('kelas', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching kelas:', error);
+                kelasTableBody.innerHTML = '<tr><td colspan="2" class="text-center text-danger">Gagal memuat data.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                kelasTableBody.innerHTML = '<tr><td colspan="2" class="text-center">Belum ada data kelas.</td></tr>';
+                return;
+            }
+
+            kelasTableBody.innerHTML = '';
+            data.forEach((kelas, index) => {
+                const row = `
+                    <tr class="clickable-row" data-id="${kelas.id}" data-nama="${kelas.kelas || ''}">
+                        <th scope="row">${index + 1}</th>
+                        <td colspan="2">${kelas.kelas}</td>
+                    </tr>
+                `;
+                kelasTableBody.innerHTML += row;
+            });
+        }
+
+        // 2. CREATE: Menangani submit form untuk menambah data
+        formKelas.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const btnTambah = document.getElementById('btn-tambah-kelas');
+            const namaKelas = inputNamaKelas.value.trim();
+
+            if (!namaKelas) {
+                alert('Nama kelas tidak boleh kosong.');
+                return;
+            }
+
+            btnTambah.disabled = true;
+            btnTambah.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            // Hanya fungsionalitas CREATE (Tambah)
+            const { error: insertError } = await supabaseClient
+                .from('tabelpengaturan')
+                .insert([{ kelas: namaKelas }]);
+
+            if (insertError) {
+                alert('Gagal menyimpan data: ' + insertError.message);
+            } else {
+                formKelas.reset(); // Kosongkan form setelah berhasil
+                await loadKelas();
+            }
+
+            btnTambah.disabled = false;
+            btnTambah.innerHTML = '<i class="fas fa-plus me-1"></i> Tambah';
+        });
+
+        // 3. Klik pada baris tabel untuk mengisi form
+        kelasTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr.clickable-row');
+            if (!row) return;
+
+            const id = row.dataset.id;
+            const nama = row.dataset.nama;
+
+            inputNamaKelas.value = nama;
+            inputKelasId.value = id;
+            inputNamaKelas.focus(); // Pindahkan fokus ke input box
+
+            // Aktifkan tombol Update dan Delete karena data sudah dipilih
+            document.getElementById('btn-update-kelas').disabled = false;
+            document.getElementById('btn-delete-kelas').disabled = false;
+        });
+        
+        // Fungsi untuk mereset form dan menonaktifkan tombol
+        function resetFormAndButtons() {
+            formKelas.reset();
+            inputKelasId.value = '';
+            document.getElementById('btn-update-kelas').disabled = true;
+            document.getElementById('btn-delete-kelas').disabled = true;
+        }
+
+        // --- FUNGSI CRUD UNTUK DATA JURUSAN ---
+
+        // 1. READ: Memuat data jurusan
+        async function loadJurusan() {
+            jurusanTableBody.innerHTML = '<tr><td colspan="2" class="text-center">Memuat data...</td></tr>';
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('id, jurusan')
+                .not('jurusan', 'is', null) // Hanya ambil baris yang kolom jurusannya tidak null
+                .order('jurusan', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching jurusan:', error);
+                jurusanTableBody.innerHTML = '<tr><td colspan="2" class="text-center text-danger">Gagal memuat data.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                jurusanTableBody.innerHTML = '<tr><td colspan="2" class="text-center">Belum ada data jurusan.</td></tr>';
+                return;
+            }
+
+            jurusanTableBody.innerHTML = '';
+            data.forEach((jurusan, index) => {
+                const row = `
+                    <tr class="clickable-row" data-id="${jurusan.id}" data-nama="${jurusan.jurusan}">
+                        <th scope="row">${index + 1}</th>
+                        <td colspan="2">${jurusan.jurusan}</td>
+                    </tr>
+                `;
+                jurusanTableBody.innerHTML += row;
+            });
+        }
+
+        // 2. CREATE: Menambah data jurusan
+        formJurusan.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const btnTambah = document.getElementById('btn-tambah-jurusan');
+            const namaJurusan = inputNamaJurusan.value.trim();
+
+            if (!namaJurusan) {
+                alert('Nama jurusan tidak boleh kosong.');
+                return;
+            }
+
+            btnTambah.disabled = true;
+            btnTambah.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            const { error: insertError } = await supabaseClient
+                .from('tabelpengaturan')
+                .insert([{ jurusan: namaJurusan }]);
+
+            if (insertError) {
+                alert('Gagal menyimpan data: ' + insertError.message);
+            } else {
+                formJurusan.reset();
+                await loadJurusan();
+            }
+
+            btnTambah.disabled = false;
+            btnTambah.innerHTML = '<i class="fas fa-plus me-1"></i> Tambah';
+        });
+
+        // 3. Klik baris tabel jurusan untuk mengisi form
+        jurusanTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr.clickable-row');
+            if (!row) return;
+
+            inputNamaJurusan.value = row.dataset.nama;
+            inputJurusanId.value = row.dataset.id;
+            inputNamaJurusan.focus();
+
+            document.getElementById('btn-update-jurusan').disabled = false;
+            document.getElementById('btn-delete-jurusan').disabled = false;
+        });
+
+        // Fungsi reset untuk form jurusan
+        function resetFormAndButtonsJurusan() {
+            formJurusan.reset();
+            inputJurusanId.value = '';
+            document.getElementById('btn-update-jurusan').disabled = true;
+            document.getElementById('btn-delete-jurusan').disabled = true;
+        }
+
+        // 4. UPDATE: Mengupdate data jurusan
+        document.getElementById('btn-update-jurusan').addEventListener('click', async () => {
+            const id = inputJurusanId.value;
+            const namaJurusan = inputNamaJurusan.value.trim();
+            const btnUpdate = document.getElementById('btn-update-jurusan');
+
+            if (!id) return;
+            btnUpdate.disabled = true;
+            btnUpdate.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            const { error } = await supabaseClient.from('tabelpengaturan').update({ jurusan: namaJurusan }).eq('id', id);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data berhasil di-update!');
+                resetFormAndButtonsJurusan();
+                await loadJurusan();
+            }
+            btnUpdate.disabled = false;
+            btnUpdate.innerHTML = 'Update';
+        });
+
+        // 5. DELETE: Menghapus data jurusan
+        document.getElementById('btn-delete-jurusan').addEventListener('click', async () => {
+            const id = inputJurusanId.value;
+            if (!id) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const { error } = await supabaseClient.from('tabelpengaturan').delete().eq('id', id);
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data berhasil dihapus!');
+                    resetFormAndButtonsJurusan();
+                    await loadJurusan();
+                }
+            }
+        });
+
+        // --- FUNGSI CRUD UNTUK DATA WALIKELAS ---
+
+        // 1. READ: Memuat data walikelas
+        async function loadWalikelas() {
+            walikelasTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Memuat data...</td></tr>';
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('id, walikelas, nip_walikelas')
+                .not('walikelas', 'is', null)
+                .order('walikelas', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching walikelas:', error);
+                walikelasTableBody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat data.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                walikelasTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Belum ada data walikelas.</td></tr>';
+                return;
+            }
+
+            walikelasTableBody.innerHTML = '';
+            data.forEach((item, index) => {
+                const row = `
+                    <tr class="clickable-row" data-id="${item.id}" data-nama="${item.walikelas || ''}" data-nip="${item.nip_walikelas || ''}">
+                        <th scope="row">${index + 1}</th>
+                        <td>${item.walikelas || '-'}</td>
+                        <td>${item.nip_walikelas || '-'}</td>
+                    </tr>
+                `;
+                walikelasTableBody.innerHTML += row;
+            });
+        }
+
+        // 2. CREATE: Menambah data walikelas
+        formWalikelas.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const namaWalikelas = inputNamaWalikelas.value.trim();
+            const nipWalikelas = inputNipWalikelas.value.trim();
+
+            if (!namaWalikelas) {
+                alert('Nama walikelas tidak boleh kosong.');
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from('tabelpengaturan')
+                .insert([{ walikelas: namaWalikelas, nip_walikelas: nipWalikelas }]);
+
+            if (error) {
+                alert('Gagal menyimpan data: ' + error.message);
+            } else {
+                formWalikelas.reset();
+                await loadWalikelas();
+            }
+        });
+
+        // 3. Klik baris tabel walikelas untuk mengisi form
+        walikelasTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr.clickable-row');
+            if (!row) return;
+
+            inputNamaWalikelas.value = row.dataset.nama;
+            inputNipWalikelas.value = row.dataset.nip;
+            inputWalikelasId.value = row.dataset.id;
+            inputNamaWalikelas.focus();
+
+            document.getElementById('btn-update-walikelas').disabled = false;
+            document.getElementById('btn-delete-walikelas').disabled = false;
+        });
+
+        // Fungsi reset untuk form walikelas
+        function resetFormAndButtonsWalikelas() {
+            formWalikelas.reset();
+            inputWalikelasId.value = '';
+            document.getElementById('btn-update-walikelas').disabled = true;
+            document.getElementById('btn-delete-walikelas').disabled = true;
+        }
+
+        // 4. UPDATE: Mengupdate data walikelas
+        document.getElementById('btn-update-walikelas').addEventListener('click', async () => {
+            const id = inputWalikelasId.value;
+            const namaWalikelas = inputNamaWalikelas.value.trim();
+            const nipWalikelas = inputNipWalikelas.value.trim();
+
+            if (!id) return;
+
+            const { error } = await supabaseClient.from('tabelpengaturan').update({ walikelas: namaWalikelas, nip_walikelas: nipWalikelas }).eq('id', id);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data berhasil di-update!');
+                resetFormAndButtonsWalikelas();
+                await loadWalikelas();
+            }
+        });
+
+        // 5. DELETE: Menghapus data walikelas
+        document.getElementById('btn-delete-walikelas').addEventListener('click', async () => {
+            const id = inputWalikelasId.value;
+            if (!id) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const { error } = await supabaseClient.from('tabelpengaturan').delete().eq('id', id);
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data berhasil dihapus!');
+                    resetFormAndButtonsWalikelas();
+                    await loadWalikelas();
+                }
+            }
+        });
+
+        // --- FUNGSI CRUD UNTUK DATA MATA PELAJARAN ---
+
+        // 1. READ: Memuat data mata pelajaran
+        async function loadMapel() {
+            mapelTableBody.innerHTML = '<tr><td colspan="2" class="text-center">Memuat data...</td></tr>';
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('id, mapel')
+                .not('mapel', 'is', null)
+                .order('mapel', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching mapel:', error);
+                mapelTableBody.innerHTML = '<tr><td colspan="2" class="text-center text-danger">Gagal memuat data.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                mapelTableBody.innerHTML = '<tr><td colspan="2" class="text-center">Belum ada data mata pelajaran.</td></tr>';
+                return;
+            }
+
+            mapelTableBody.innerHTML = '';
+            data.forEach((mapel, index) => {
+                const row = `
+                    <tr class="clickable-row" data-id="${mapel.id}" data-nama="${mapel.mapel || ''}">
+                        <th scope="row">${index + 1}</th>
+                        <td colspan="2">${mapel.mapel}</td>
+                    </tr>
+                `;
+                mapelTableBody.innerHTML += row;
+            });
+        }
+
+        // 2. CREATE: Menambah data mata pelajaran
+        formMapel.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const namaMapel = inputNamaMapel.value.trim();
+            if (!namaMapel) {
+                alert('Nama mata pelajaran tidak boleh kosong.');
+                return;
+            }
+            const { error } = await supabaseClient.from('tabelpengaturan').insert([{ mapel: namaMapel }]);
+            if (error) {
+                alert('Gagal menyimpan data: ' + error.message);
+            } else {
+                formMapel.reset();
+                await loadMapel();
+            }
+        });
+
+        // 3. Klik baris tabel mapel untuk mengisi form
+        mapelTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr.clickable-row');
+            if (!row) return;
+
+            inputNamaMapel.value = row.dataset.nama;
+            inputMapelId.value = row.dataset.id;
+            inputNamaMapel.focus();
+
+            document.getElementById('btn-update-mapel').disabled = false;
+            document.getElementById('btn-delete-mapel').disabled = false;
+        });
+
+        // Fungsi reset untuk form mapel
+        function resetFormAndButtonsMapel() {
+            formMapel.reset();
+            inputMapelId.value = '';
+            document.getElementById('btn-update-mapel').disabled = true;
+            document.getElementById('btn-delete-mapel').disabled = true;
+        }
+
+        // 4. UPDATE: Mengupdate data mata pelajaran
+        document.getElementById('btn-update-mapel').addEventListener('click', async () => {
+            const id = inputMapelId.value;
+            const namaMapel = inputNamaMapel.value.trim();
+            if (!id) return;
+
+            const { error } = await supabaseClient.from('tabelpengaturan').update({ mapel: namaMapel }).eq('id', id);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data berhasil di-update!');
+                resetFormAndButtonsMapel();
+                await loadMapel();
+            }
+        });
+
+        // 5. DELETE: Menghapus data mata pelajaran
+        document.getElementById('btn-delete-mapel').addEventListener('click', async () => {
+            const id = inputMapelId.value;
+            if (!id) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const { error } = await supabaseClient.from('tabelpengaturan').delete().eq('id', id);
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data berhasil dihapus!');
+                    resetFormAndButtonsMapel();
+                    await loadMapel();
+                }
+            }
+        });
+
+        // --- FUNGSI CRUD UNTUK DATA GURU ---
+
+        // 1. READ: Memuat data guru
+        async function loadGuru() {
+            guruTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Memuat data...</td></tr>';
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('id, guru, nip_guru')
+                .not('guru', 'is', null)
+                .order('guru', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching guru:', error);
+                guruTableBody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Gagal memuat data.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                guruTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Belum ada data guru.</td></tr>';
+                return;
+            }
+
+            guruTableBody.innerHTML = '';
+            data.forEach((item, index) => {
+                const row = `
+                    <tr class="clickable-row" data-id="${item.id}" data-nama="${item.guru || ''}" data-nip="${item.nip_guru || ''}">
+                        <th scope="row">${index + 1}</th>
+                        <td>${item.guru || '-'}</td>
+                        <td>${item.nip_guru || '-'}</td>
+                    </tr>
+                `;
+                guruTableBody.innerHTML += row;
+            });
+        }
+
+        // 2. CREATE: Menambah data guru
+        formGuru.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const namaGuru = inputNamaGuru.value.trim();
+            const nipGuru = inputNipGuru.value.trim();
+
+            if (!namaGuru) {
+                alert('Nama guru tidak boleh kosong.');
+                return;
+            }
+
+            const { error } = await supabaseClient.from('tabelpengaturan').insert([{ guru: namaGuru, nip_guru: nipGuru }]);
+
+            if (error) {
+                alert('Gagal menyimpan data: ' + error.message);
+            } else {
+                formGuru.reset();
+                await loadGuru();
+            }
+        });
+
+        // 3. Klik baris tabel guru untuk mengisi form
+        guruTableBody.addEventListener('click', (event) => {
+            const row = event.target.closest('tr.clickable-row');
+            if (!row) return;
+
+            inputNamaGuru.value = row.dataset.nama;
+            inputNipGuru.value = row.dataset.nip;
+            inputGuruId.value = row.dataset.id;
+            inputNamaGuru.focus();
+
+            document.getElementById('btn-update-guru').disabled = false;
+            document.getElementById('btn-delete-guru').disabled = false;
+        });
+
+        // Fungsi reset untuk form guru
+        function resetFormAndButtonsGuru() {
+            formGuru.reset();
+            inputGuruId.value = '';
+            document.getElementById('btn-update-guru').disabled = true;
+            document.getElementById('btn-delete-guru').disabled = true;
+        }
+
+        // 4. UPDATE: Mengupdate data guru
+        document.getElementById('btn-update-guru').addEventListener('click', async () => {
+            const id = inputGuruId.value;
+            const namaGuru = inputNamaGuru.value.trim();
+            const nipGuru = inputNipGuru.value.trim();
+            if (!id) return;
+
+            const { error } = await supabaseClient.from('tabelpengaturan').update({ guru: namaGuru, nip_guru: nipGuru }).eq('id', id);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data berhasil di-update!');
+                resetFormAndButtonsGuru();
+                await loadGuru();
+            }
+        });
+
+        // 5. DELETE: Menghapus data guru
+        document.getElementById('btn-delete-guru').addEventListener('click', async () => {
+            const id = inputGuruId.value;
+            if (!id) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const { error } = await supabaseClient.from('tabelpengaturan').delete().eq('id', id);
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data berhasil dihapus!');
+                    resetFormAndButtonsGuru();
+                    await loadGuru();
+                }
+            }
+        });
+
+        // 4. UPDATE: Menangani klik tombol update
+        document.getElementById('btn-update-kelas').addEventListener('click', async () => {
+            const id = inputKelasId.value;
+            const namaKelas = inputNamaKelas.value.trim();
+            const btnUpdate = document.getElementById('btn-update-kelas');
+
+            if (!id) {
+                alert('Silakan pilih data dari tabel terlebih dahulu untuk di-update.');
+                return;
+            }
+
+            btnUpdate.disabled = true;
+            btnUpdate.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            const { error } = await supabaseClient.from('tabelpengaturan').update({ kelas: namaKelas }).eq('id', id);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data berhasil di-update!');
+                resetFormAndButtons();
+                await loadKelas();
+            }
+            btnUpdate.disabled = false;
+            btnUpdate.innerHTML = 'Update';
+        });
+        
+        // 5. DELETE: Menangani klik tombol delete
+        document.getElementById('btn-delete-kelas').addEventListener('click', async () => {
+            const id = inputKelasId.value;
+            const btnDelete = document.getElementById('btn-delete-kelas');
+
+            if (!id) {
+                alert('Silakan pilih data dari tabel terlebih dahulu untuk dihapus.');
+                return;
+            }
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                btnDelete.disabled = true;
+                btnDelete.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                const { error } = await supabaseClient.from('tabelpengaturan').delete().eq('id', id);
+
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data berhasil dihapus!');
+                    resetFormAndButtons();
+                    await loadKelas();
+                }
+
+                btnDelete.disabled = false;
+                btnDelete.innerHTML = 'Delete';
+            }
+        });
+
+        // Panggil fungsi reset di awal untuk memastikan tombol nonaktif
+        resetFormAndButtons();
+        resetFormAndButtonsJurusan();
+        resetFormAndButtonsWalikelas();
+        resetFormAndButtonsMapel();
+        resetFormAndButtonsGuru();
+
+        // Event Listener saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAccess(); // Pastikan hanya superadmin yang bisa akses
+            checkLoginStatus();
+            loadSchoolIdentity();
+            populateLoginUsernames();
+            
+            // Muat data kelas saat halaman siap
+            loadKelas();
+            loadJurusan();
+            loadWalikelas();
+            loadMapel();
+            loadGuru();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Siswa - Manajemen Sistem Kesiswaan</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-color: #e0e5ec; /* Warna latar belakang utama untuk efek 3D */
+            --primary-blue: #007bff; /* Warna tombol/highlight default */
+            --dark-text: #343a40;
+            /* Bayangan untuk efek 3D menonjol */
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --protruding-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            --inset-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            --widget-radius: 18px; /* Sudut membulat yang lebih besar */
+        }
+
+        /* Reset dan Layout Dasar */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color); 
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: 80px; /* Memberi ruang untuk navbar fixed-top */
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: var(--bg-color) !important;
+            box-shadow: var(--protruding-shadow);
+            color: var(--dark-text);
+        }
+        .navbar-brand strong {
+            color: var(--dark-text);
+        }
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            box-shadow: var(--protruding-shadow);
+            object-fit: cover;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .navbar-toggler:hover, .navbar-toggler:focus {
+            box-shadow: var(--inset-shadow);
+            outline: none;
+        }
+
+        /* Offcanvas Menu Styling */
+        .offcanvas.offcanvas-end {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+        }
+        .offcanvas-header {
+            background-color: var(--bg-color); 
+            border-bottom: 1px solid var(--shadow-dark);
+            color: var(--dark-text);
+        }
+        .btn-close.btn-close-white {
+            filter: brightness(100%);
+        }
+        .user-card {
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+
+        .user-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: var(--protruding-shadow);
+            padding: 5px;
+            background-color: var(--bg-color);
+        }
+
+        .user-card .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-card .btn, .user-card .btn-login {
+            box-shadow: var(--protruding-shadow);
+            border: none;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card .btn:hover, .user-card .btn-login:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .user-card #logout-button {
+            color: #dc3545;
+        }
+
+        .offcanvas-body .nav-link {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            padding-left: 1.5rem; /* DIGESER: Memberi jarak dari tepi kiri */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .offcanvas-body .nav-link i {
+            margin-right: 0.75rem; /* DIGESER: Jarak antara ikon dan teks */
+            width: 20px; /* Pastikan ikon punya lebar tetap agar rapi */
+            text-align: center;
+        }
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link:focus {
+            box-shadow: var(--inset-shadow);
+            transform: translateY(2px);
+        }
+
+        .offcanvas-body .nav-link.active {
+            color: var(--primary-blue); 
+            box-shadow: var(--inset-shadow);
+            font-weight: 600;
+        }
+
+        /* Footer Styling */
+        .footer {
+            padding: 2rem 0;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow); 
+        }
+        .footer-school-name, .footer-school-address {
+            color: var(--dark-text);
+        }
+        .footer .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            font-size: 1.4rem;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .footer .social-icons a:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Custom page styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+            margin-bottom: 2rem !important;
+            text-align: center;
+        }
+        .main-card {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--protruding-shadow);
+            padding: 1.5rem;
+        }
+        .main-card .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--shadow-dark);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .main-card .list-group-item {
+            background-color: transparent;
+            border-color: rgba(0,0,0,0.05);
+        }
+        .action-buttons .btn, .action-buttons .input-group .btn {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: box-shadow 0.2s ease;
+        }
+        .action-buttons .btn:hover, .action-buttons .input-group .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .action-buttons .btn-primary { color: var(--primary-blue); }
+        .action-buttons .btn-success { color: #198754; }
+        .action-buttons .btn-info { color: #0dcaf0; }
+        .action-buttons .form-control {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .action-buttons .form-control:focus {
+             box-shadow: var(--inset-shadow), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .table {
+            background-color: transparent;
+            font-size: 0.9rem;
+        }
+        .table thead {
+            border-bottom: 2px solid var(--shadow-dark);
+        }
+        .table th {
+            background-color: var(--bg-color);
+            text-align: center;
+            color: var(--dark-text);
+            font-weight: 600;
+            box-shadow: var(--inset-shadow); /* Efek cekung untuk header */
+        }
+        .table td, .table th {
+            /* Membuat garis pemisah halus dengan gaya neumorphism */
+            box-shadow: inset 1px 1px 2px var(--shadow-dark), 
+                        inset -1px -1px 2px var(--shadow-light);
+            padding: 0.75rem; /* Menambah padding agar konten tidak terlalu mepet garis */
+        }
+        .table .btn-detail {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+            padding: 0.3rem 0.8rem;
+        }
+        .table .btn-detail:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: var(--widget-radius);
+            box-shadow: none;
+        }
+        .modal-header, .modal-footer {
+            background-color: var(--bg-color);
+            border-color: var(--shadow-dark);
+        }
+        .modal-body {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .modal-body .form-control, .modal-body .form-select {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .modal-footer .btn {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+        }
+        .modal-footer .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .modal-footer .btn-primary { color: var(--primary-blue); }
+        .modal-footer .btn-warning { color: #ffc107; }
+        .modal-footer .btn-danger { color: #dc3545; }
+        .modal-footer .btn-success { color: #198754; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="logo.png" alt="Logo Sekolah" class="me-2">
+                    <strong>Manajemen Kesiswaan</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" title="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu Utama</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="user-card p-3 text-center">
+                <img id="user-avatar" src="logo.png" alt="Foto User">
+                <div id="user-info" class="d-none mt-3">
+                    <div class="user-name mb-3">Nama Pengguna</div>
+                    <a href="#" id="logout-button" class="btn btn-sm">Logout</a>
+                </div>
+                <div id="login-prompt" class="mt-3">
+                    <button type="button" class="btn btn-sm btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+            </div>
+            <ul class="navbar-nav justify-content-end flex-grow-1 p-3">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-home"></i> Beranda</a></li>
+                <li id="admin-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturanadmin.html"><i class="fa-solid fa-user-shield"></i> Pengaturan Administrator</a></li>
+                <li id="identitas-sekolah-menu-item" class="nav-item d-none"><a class="nav-link" href="identitas.html"><i class="fa-solid fa-school"></i> Identitas Sekolah</a></li>
+                <li id="profil-waka-menu-item" class="nav-item d-none"><a class="nav-link" href="wakasis.html"><i class="fa-solid fa-user-tie"></i> Profil Waka Kesiswaan</a></li>
+                <li id="pengaturan-data-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturandata.html"><i class="fa-solid fa-database"></i> Pengaturan Data</a></li>
+                <li class="nav-item"><a class="nav-link active" href="datasiswa.html"><i class="fa-solid fa-users"></i> Data Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="prestasi.html"><i class="fa-solid fa-trophy"></i> Prestasi Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="bantuan.html"><i class="fa-solid fa-hand-holding-heart"></i> Bantuan Pendidikan</a></li>
+                <li class="nav-item"><a class="nav-link" href="putussekolah.html"><i class="fa-solid fa-user-slash"></i> Putus Sekolah</a></li>
+                <li class="nav-item"><a class="nav-link" href="mutasi.html"><i class="fa-solid fa-right-left"></i> Mutasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="pembinaan.html"><i class="fa-solid fa-chalkboard-user"></i> Pembinaan Guru/Walas/BK</a></li>
+                <li class="nav-item"><a class="nav-link" href="pemanggilan.html"><i class="fa-solid fa-print"></i> Cetak Berkas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">DATA SISWA AKTIF</h1>
+
+        <!-- Kontainer Rekap Data -->
+        <div class="main-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-chart-pie me-2"></i> Rekapitulasi Data Siswa</span>
+                <button class="btn btn-sm" id="refresh-rekap-button" title="Refresh Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row g-4" id="rekap-container">
+                    <!-- Rekap Jumlah -->
+                    <div class="col-lg-4 col-md-6">
+                        <h6><i class="fas fa-users me-2 text-primary"></i>Jumlah Siswa</h6>
+                        <ul class="list-group" id="rekap-jumlah-list">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">Memuat...</li>
+                        </ul>
+                    </div>
+                    <!-- Rekap Agama -->
+                    <div class="col-lg-4 col-md-6">
+                        <h6><i class="fas fa-place-of-worship me-2 text-success"></i>Berdasarkan Agama</h6>
+                        <ul class="list-group" id="rekap-agama-list"></ul>
+                    </div>
+                    <!-- Rekap Kelas -->
+                    <div class="col-lg-4 col-md-6">
+                        <h6><i class="fas fa-chalkboard-teacher me-2 text-info"></i>Berdasarkan Kelas</h6>
+                        <ul class="list-group" id="rekap-kelas-list"></ul>
+                    </div>
+                    <!-- Rekap Pekerjaan Ayah -->
+                    <div class="col-lg-6 col-md-6 pt-3">
+                        <h6><i class="fas fa-briefcase me-2 text-warning"></i>Berdasarkan Pekerjaan Ayah</h6>
+                        <ul class="list-group" id="rekap-pekerjaan-ayah-list"></ul>
+                    </div>
+                    <!-- Rekap Pekerjaan Ibu -->
+                    <div class="col-lg-6 col-md-6 pt-3 pt-lg-3">
+                        <h6><i class="fas fa-briefcase me-2 text-danger"></i>Berdasarkan Pekerjaan Ibu</h6>
+                        <ul class="list-group" id="rekap-pekerjaan-ibu-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi (Responsif) -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-4 action-buttons">
+            <div class="input-group" style="max-width: 350px; min-width: 200px;">
+                <input type="text" class="form-control" placeholder="Cari siswa..." id="search-input" title="Cari siswa">
+                <button class="btn" type="button" id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="btn btn-primary" id="btn-tambah-siswa" title="Tambah Data Siswa"><i class="fas fa-plus"></i> <span class="ms-1">Tambah Data</span></button>
+            <button class="btn btn-success" id="btn-export-excel"><i class="fas fa-file-excel me-1"></i> Export</button>
+            <button class="btn btn-info text-white" id="btn-import-csv"><i class="fas fa-file-import me-1"></i> Import</button>
+            <button class="btn btn-secondary" id="btn-download-template"><i class="fas fa-file-download me-1"></i> Unduh Template</button>
+            <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+            <a href="index.html" class="btn ms-auto"><i class="fas fa-home me-1"></i> Beranda</a>
+        </div>
+
+        <!-- Tabel Data Siswa -->
+        <div class="main-card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Nama Siswa</th>
+                                <th scope="col">NIPD</th>
+                                <th scope="col">NISN</th>
+                                <th scope="col">NIK</th>
+                                <th scope="col">No. KK</th>
+                                <th scope="col">Tempat Lahir</th>
+                                <th scope="col">Tanggal Lahir</th>
+                                <th scope="col">Jenis Kelamin</th>
+                                <th scope="col">Agama</th>
+                                <th scope="col">Alamat</th>
+                                <th scope="col">Kode Pos</th>
+                                <th scope="col">Nama Ayah</th>
+                                <th scope="col">Pekerjaan</th>
+                                <th scope="col">Penghasilan</th>
+                                <th scope="col">Nama Ibu</th>
+                                <th scope="col">Pekerjaan</th>
+                                <th scope="col">Penghasilan</th>
+                                <th scope="col">Kelas Saat Ini</th>
+                                <th scope="col" class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="siswa-table-body">
+                            <!-- Contoh baris data (placeholder) -->
+                            <tr>
+                                <td colspan="20" class="text-center">Belum ada data siswa.</td>
+                            </tr>
+                            <!-- Data dari Supabase akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigasi Paginasi (jika diperlukan nanti) -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+    </main>
+
+    <!-- Modal Info Login Diperlukan (BARU) -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="loginRequiredModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Akses Dibatasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center fs-5">Silahkan login menggunakan akun Utama terlebih dahulu.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="btn-login-from-info" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Login Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (Disalin dari index.html) -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login Administrator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="login-error" class="alert alert-danger d-none" role="alert">
+                        Username atau password salah.
+                    </div>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="login-username" class="form-label">Username</label>
+                            <select class="form-select" id="login-username" required autocomplete="username">
+                                <option value="" selected disabled>Pilih username...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="login-password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Tampilkan/Sembunyikan password"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" form="login-form" class="btn btn-primary" id="login-button">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah/Update Siswa -->
+    <div class="modal fade" id="siswaModal" tabindex="-1" aria-labelledby="siswaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content"> <!-- Modal ini juga akan terpengaruh oleh style baru -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="siswaModalLabel">Tambah Data Siswa Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form-siswa">
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Kolom Kiri -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3 text-primary">Data Pribadi Siswa</h6>
+                                <div class="mb-3">
+                                    <label for="nama_siswa" class="form-label">Nama Siswa</label>
+                                    <input type="text" class="form-control" id="nama_siswa" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nipd" class="form-label">NIPD</label>
+                                        <input type="text" class="form-control" id="nipd">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nisn" class="form-label">NISN</label>
+                                        <input type="text" class="form-control" id="nisn">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nik" class="form-label">NIK</label>
+                                        <input type="text" class="form-control" id="nik">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="nomor_kk" class="form-label">No. KK</label>
+                                        <input type="text" class="form-control" id="nomor_kk">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                                        <input type="text" class="form-control" id="tempat_lahir">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                                        <input type="date" class="form-control" id="tanggal_lahir">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                                        <select class="form-select" id="jenis_kelamin">
+                                            <option value="" selected disabled>Pilih...</option>
+                                            <option value="Laki-laki">Laki-laki</option>
+                                            <option value="Perempuan">Perempuan</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="agama" class="form-label">Agama</label>
+                                        <select class="form-select" id="agama">
+                                            <option value="" selected disabled>Pilih Agama...</option>
+                                            <option value="Islam">Islam</option>
+                                            <option value="Kristen Katholik">Kristen Katholik</option>
+                                            <option value="Kristen Protestan">Kristen Protestan</option>
+                                            <option value="Hindu">Hindu</option>
+                                            <option value="Budha">Budha</option>
+                                            <option value="Kong Fu Chu">Kong Fu Chu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="alamat" class="form-label">Alamat</label>
+                                    <textarea class="form-control" id="alamat" rows="2"></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="kode_pos" class="form-label">Kode Pos</label>
+                                        <input type="text" class="form-control" id="kode_pos">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="kelas" class="form-label">Kelas Saat Ini</label>
+                                        <select class="form-select" id="kelas"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Kolom Kanan -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3 text-primary">Data Orang Tua</h6>
+                                <div class="mb-3">
+                                    <label for="nama_ayah" class="form-label">Nama Ayah</label>
+                                    <input type="text" class="form-control" id="nama_ayah">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pekerjaan_ayah" class="form-label">Pekerjaan Ayah</label>
+                                    <select class="form-select" id="pekerjaan_ayah">
+                                        <option value="" selected disabled>Pilih Pekerjaan...</option>
+                                        <option value="ASN">ASN</option>
+                                        <option value="Petani">Petani</option>
+                                        <option value="Nelayan">Nelayan</option>
+                                        <option value="Pegawai Swasta">Pegawai Swasta</option>
+                                        <option value="Buruh Harian">Buruh Harian</option>
+                                        <option value="Wiraswasta">Wiraswasta</option>
+                                        <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+                                        <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="penghasilan_ayah" class="form-label">Penghasilan Ayah</label>
+                                    <select class="form-select" id="penghasilan_ayah">
+                                        <option value="" selected disabled>Pilih Penghasilan...</option>
+                                        <option value="dibawah 1.000.000">dibawah 1.000.000</option>
+                                        <option value="1.000.000-2.000.000">1.000.000-2.000.000</option>
+                                        <option value="2.000.000-5.000.000">2.000.000-5.000.000</option>
+                                        <option value="5.000.000-10.000.000">5.000.000-10.000.000</option>
+                                        <option value="diatas 10.000.000">diatas 10.000.000</option>
+                                    </select>
+                                </div>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="nama_ibu" class="form-label">Nama Ibu</label>
+                                    <input type="text" class="form-control" id="nama_ibu">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pekerjaan_ibu" class="form-label">Pekerjaan Ibu</label>
+                                    <select class="form-select" id="pekerjaan_ibu">
+                                        <option value="" selected disabled>Pilih Pekerjaan...</option>
+                                        <option value="ASN">ASN</option>
+                                        <option value="Petani">Petani</option>
+                                        <option value="Nelayan">Nelayan</option>
+                                        <option value="Pegawai Swasta">Pegawai Swasta</option>
+                                        <option value="Buruh Harian">Buruh Harian</option>
+                                        <option value="Wiraswasta">Wiraswasta</option>
+                                        <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+                                        <option value="Tidak Bekerja">Tidak Bekerja</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="penghasilan_ibu" class="form-label">Penghasilan Ibu</label>
+                                    <select class="form-select" id="penghasilan_ibu">
+                                        <option value="" selected disabled>Pilih Penghasilan...</option>
+                                        <option value="dibawah 1.000.000">dibawah 1.000.000</option>
+                                        <option value="1.000.000-2.000.000">1.000.000-2.000.000</option>
+                                        <option value="2.000.000-5.000.000">2.000.000-5.000.000</option>
+                                        <option value="5.000.000-10.000.000">5.000.000-10.000.000</option>
+                                        <option value="diatas 10.000.000">diatas 10.000.000</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="siswa-id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success d-none me-auto" id="btn-luluskan-siswa">Luluskan Siswa</button>
+                        <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger d-none" id="btn-delete-siswa">Delete</button>
+                        <button type="button" class="btn btn-warning d-none" id="btn-update-siswa">Update</button>
+                        <button type="submit" class="btn btn-primary" id="btn-konfirmasi-siswa">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p id="footer-school-name" class="footer-school-name">Nama Sekolah Anda</p>
+            <p id="footer-school-address" class="footer-school-address">Alamat Sekolah</p>
+            <div class="social-icons mb-2">
+                <a href="#" class="facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="youtube" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <small>&copy; Kenji Studio Developer 2025.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SheetJS (XLSX) Library for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- Papa Parse for CSV Import -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Skrip Global dan Skrip Halaman -->
+    <script src="global.js"></script>
+    <script>
+        const siswaModal = new bootstrap.Modal(document.getElementById('siswaModal'));
+        const formSiswa = document.getElementById('form-siswa');
+        const siswaTableBody = document.getElementById('siswa-table-body');
+
+        // Variabel global untuk menyimpan data siswa yang sedang ditampilkan
+        let currentSiswaData = [];
+
+        // Fungsi untuk memuat data siswa ke tabel utama
+        async function loadSiswa(searchTerm = '') {
+            siswaTableBody.innerHTML = `<tr><td colspan="20" class="text-center">Memuat data siswa...</td></tr>`;
+
+            let query = supabaseClient
+                .from('tabelsiswa')
+                .select('*');
+
+            // Jika ada kata kunci pencarian, tambahkan filter 'or'
+            if (searchTerm) {
+                const searchPattern = `%${searchTerm}%`;
+                query = query.or(
+                    `nama_siswa.ilike.${searchPattern},` +
+                    `nisn.ilike.${searchPattern},` +
+                    `nipd.ilike.${searchPattern},` +
+                    `nik.ilike.${searchPattern},` +
+                    `nomor_kk.ilike.${searchPattern},` +
+                    `jenis_kelamin.ilike.${searchPattern},` +
+                    `kelas.ilike.${searchPattern},` +
+                    `agama.ilike.${searchPattern}`
+                );
+            }
+
+            const { data, error } = await query
+                .order('nama_siswa', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching siswa:', error);
+                siswaTableBody.innerHTML = `<tr><td colspan="20" class="text-center text-danger">Gagal memuat data.</td></tr>`;
+                updateRekapData([]); // Kosongkan rekap jika terjadi error
+                return;
+            }
+
+            // Panggil fungsi untuk update rekap data dengan data yang baru diambil
+            updateRekapData(data);
+
+            if (data.length === 0) {
+                siswaTableBody.innerHTML = `<tr><td colspan="20" class="text-center">Belum ada data siswa.</td></tr>`;
+                return;
+            }
+
+            siswaTableBody.innerHTML = '';
+            data.forEach((siswa, index) => {
+                const row = `
+                    <tr>
+                        <th>${index + 1}</th>
+                        <td>${siswa.nama_siswa || '-'}</td>
+                        <td>${siswa.nipd || '-'}</td>
+                        <td>${siswa.nisn || '-'}</td>
+                        <td>${siswa.nik || '-'}</td>
+                        <td>${siswa.nomor_kk || '-'}</td>
+                        <td>${siswa.tempat_lahir || '-'}</td>
+                        <td>${siswa.tanggal_lahir || '-'}</td>
+                        <td>${siswa.jenis_kelamin || '-'}</td>
+                        <td>${siswa.agama || '-'}</td>
+                        <td>${siswa.alamat || '-'}</td>
+                        <td>${siswa.kode_pos || '-'}</td>
+                        <td>${siswa.nama_ayah || '-'}</td>
+                        <td>${siswa.pekerjaan_ayah || '-'}</td>
+                        <td>${siswa.penghasilan_ayah || '-'}</td>
+                        <td>${siswa.nama_ibu || '-'}</td>
+                        <td>${siswa.pekerjaan_ibu || '-'}</td>
+                        <td>${siswa.penghasilan_ibu || '-'}</td>
+                        <td>${siswa.kelas || '-'}</td>
+                        <td class="text-center action-buttons">
+                            <button class="btn btn-sm btn-info btn-detail" data-id="${siswa.id}">Klik Me</button>
+                        </td>
+                    </tr>
+                `;
+                siswaTableBody.innerHTML += row;
+            });
+        }
+
+        // Fungsi untuk menghitung dan menampilkan rekap data
+        function updateRekapData(siswaData) {
+            const rekapJumlahList = document.getElementById('rekap-jumlah-list');
+            const rekapAgamaList = document.getElementById('rekap-agama-list');
+            const rekapPekerjaanAyahList = document.getElementById('rekap-pekerjaan-ayah-list');
+            const rekapKelasList = document.getElementById('rekap-kelas-list');
+            const rekapPekerjaanIbuList = document.getElementById('rekap-pekerjaan-ibu-list');
+
+            // Definisikan kategori master sesuai dropdown
+            const AGAMA_CATEGORIES = ['Islam', 'Kristen Katholik', 'Kristen Protestan', 'Hindu', 'Budha', 'Kong Fu Chu'];
+            const PEKERJAAN_CATEGORIES = ['ASN', 'Petani', 'Nelayan', 'Pegawai Swasta', 'Buruh Harian', 'Wiraswasta', 'Ibu Rumah Tangga', 'Tidak Bekerja'];
+
+            // Definisikan palet warna untuk setiap kategori
+            const AGAMA_COLORS = {
+                'Islam': 'bg-success',
+                'Kristen Katholik': 'bg-primary',
+                'Kristen Protestan': 'bg-info text-dark',
+                'Hindu': 'bg-warning text-dark',
+                'Budha': 'bg-danger',
+                'Kong Fu Chu': 'bg-dark'
+            };
+            const PEKERJAAN_COLORS = { 'ASN': 'bg-primary', 'Petani': 'bg-success', 'Nelayan': 'bg-info text-dark', 'Pegawai Swasta': 'bg-dark', 'Buruh Harian': 'bg-secondary', 'Wiraswasta': 'bg-warning text-dark', 'Ibu Rumah Tangga': 'bg-danger', 'Tidak Bekerja': 'bg-light text-dark' };
+            const KELAS_COLORS = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning text-dark', 'bg-info text-dark', 'bg-dark'];
+
+
+            // Kosongkan kontainer rekap
+            rekapJumlahList.innerHTML = '';
+            rekapAgamaList.innerHTML = '';
+            rekapPekerjaanAyahList.innerHTML = '';
+            rekapKelasList.innerHTML = '';
+            rekapPekerjaanIbuList.innerHTML = '';
+
+            if (siswaData.length === 0) {
+                rekapJumlahList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                return;
+            }
+
+            // 1. Hitung Jumlah Siswa, Laki-laki, dan Perempuan
+            const totalSiswa = siswaData.length;
+            const jumlahLaki = siswaData.filter(s => s.jenis_kelamin === 'Laki-laki').length;
+            const jumlahPerempuan = siswaData.filter(s => s.jenis_kelamin === 'Perempuan').length;
+
+            rekapJumlahList.innerHTML = `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Total Siswa <span class="badge bg-primary rounded-pill">${totalSiswa}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Laki-laki <span class="badge bg-info rounded-pill">${jumlahLaki}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Perempuan <span class="badge bg-danger rounded-pill">${jumlahPerempuan}</span>
+                </li>
+            `;
+
+            // Fungsi bantuan untuk menghitung frekuensi
+            const countFrequency = (arr, key) => {
+                return arr.reduce((acc, item) => {
+                    const value = item[key] || 'Tidak Diisi';
+                    acc[value] = (acc[value] || 0) + 1;
+                    return acc;
+                }, {});
+            };
+
+            // Fungsi bantuan untuk render list group
+            const renderDynamicList = (element, data, colorPalette) => {
+                const sortedKeys = Object.keys(data).sort();
+                sortedKeys.forEach((key, index) => {
+                    const value = data[key];
+                    const badgeColor = colorPalette[index % colorPalette.length];
+                    element.innerHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${key} <span class="badge ${badgeColor} rounded-pill">${value}</span>
+                        </li>`;
+                });
+                if (sortedKeys.length === 0) {
+                    element.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
+                }
+            };
+
+            // Fungsi bantuan baru untuk render list group dengan kategori master
+            const renderMasterList = (element, frequencyMap, masterList, colorMap) => {
+                masterList.forEach(category => {
+                    const count = frequencyMap[category] || 0;
+                    const badgeColor = colorMap[category] || 'bg-secondary';
+                    element.innerHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${category} <span class="badge ${badgeColor} rounded-pill">${count}</span>
+                        </li>`;
+                });
+            };
+
+            // 2. Hitung dan tampilkan rekap lainnya
+            renderMasterList(rekapAgamaList, countFrequency(siswaData, 'agama'), AGAMA_CATEGORIES, AGAMA_COLORS);
+            renderMasterList(rekapPekerjaanAyahList, countFrequency(siswaData, 'pekerjaan_ayah'), PEKERJAAN_CATEGORIES, PEKERJAAN_COLORS);
+            renderMasterList(rekapPekerjaanIbuList, countFrequency(siswaData, 'pekerjaan_ibu'), PEKERJAAN_CATEGORIES, PEKERJAAN_COLORS);
+            renderDynamicList(rekapKelasList, countFrequency(siswaData, 'kelas'), KELAS_COLORS); // Kelas tetap dinamis
+        }
+
+        // Fungsi untuk mengisi dropdown kelas di modal
+        async function populateKelasDropdown() {
+            const kelasSelect = document.getElementById('kelas');
+            kelasSelect.innerHTML = '<option value="">Memuat kelas...</option>';
+
+            const { data, error } = await supabaseClient
+                .from('tabelpengaturan')
+                .select('kelas')
+                .not('kelas', 'is', null)
+                .order('kelas', { ascending: true });
+
+            if (error) {
+                kelasSelect.innerHTML = '<option value="">Gagal memuat</option>';
+                return;
+            }
+
+            kelasSelect.innerHTML = '<option value="" selected disabled>Pilih Kelas</option>';
+            data.forEach(item => {
+                const option = `<option value="${item.kelas}">${item.kelas}</option>`;
+                kelasSelect.innerHTML += option;
+            });
+        }
+
+        // Event listener untuk form tambah siswa
+        formSiswa.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const btnKonfirmasi = document.getElementById('btn-konfirmasi-siswa');
+            btnKonfirmasi.disabled = true;
+            btnKonfirmasi.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+            const dataSiswa = {
+                nama_siswa: document.getElementById('nama_siswa').value,
+                nipd: document.getElementById('nipd').value,
+                nisn: document.getElementById('nisn').value,
+                nik: document.getElementById('nik').value,
+                nomor_kk: document.getElementById('nomor_kk').value,
+                tempat_lahir: document.getElementById('tempat_lahir').value,
+                tanggal_lahir: document.getElementById('tanggal_lahir').value,
+                jenis_kelamin: document.getElementById('jenis_kelamin').value,
+                agama: document.getElementById('agama').value,
+                alamat: document.getElementById('alamat').value,
+                kode_pos: document.getElementById('kode_pos').value,
+                nama_ayah: document.getElementById('nama_ayah').value,
+                pekerjaan_ayah: document.getElementById('pekerjaan_ayah').value,
+                penghasilan_ayah: document.getElementById('penghasilan_ayah').value,
+                nama_ibu: document.getElementById('nama_ibu').value,
+                pekerjaan_ibu: document.getElementById('pekerjaan_ibu').value,
+                penghasilan_ibu: document.getElementById('penghasilan_ibu').value,
+                kelas: document.getElementById('kelas').value,
+            };
+
+            const { error } = await supabaseClient.from('tabelsiswa').insert([dataSiswa]);
+
+            if (error) {
+                alert('Gagal menyimpan data siswa: ' + error.message);
+            } else {
+                alert('Data siswa berhasil ditambahkan!');
+                siswaModal.hide();
+                await loadSiswa();
+                // Data rekap akan diperbarui di dalam loadSiswa()
+            }
+
+            btnKonfirmasi.disabled = false;
+            btnKonfirmasi.innerHTML = 'Konfirmasi';
+        });
+
+        // Event listener untuk membersihkan modal saat dibuka untuk menambah data
+        document.getElementById('siswaModal').addEventListener('show.bs.modal', () => {
+            // Cek apakah modal dibuka oleh tombol 'Tambah'
+            if (!document.getElementById('siswa-id').value) {
+                formSiswa.reset();
+                document.getElementById('siswaModalLabel').textContent = 'Tambah Data Siswa Baru';
+                document.getElementById('btn-konfirmasi-siswa').classList.remove('d-none');
+                document.getElementById('btn-update-siswa').classList.add('d-none');
+                document.getElementById('btn-delete-siswa').classList.add('d-none');
+            }
+        });
+
+        // Event listener untuk membersihkan ID saat modal ditutup
+        document.getElementById('siswaModal').addEventListener('hidden.bs.modal', () => {
+            document.getElementById('siswa-id').value = '';
+            // Kembalikan fokus ke tombol 'Tambah' untuk mengatasi warning aria-hidden
+            const tambahButton = document.getElementById('btn-tambah-siswa');
+            if (tambahButton) {
+                tambahButton.focus();
+            }
+        });
+
+        // Event Delegation untuk tombol "Klik Me" di tabel
+        siswaTableBody.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('btn-detail')) {
+                const siswaId = event.target.dataset.id;
+
+                // Ambil data lengkap siswa dari database
+                const { data, error } = await supabaseClient
+                    .from('tabelsiswa')
+                    .select('*')
+                    .eq('id', siswaId)
+                    .single();
+
+                if (error) {
+                    alert('Gagal mengambil detail data siswa.');
+                    return;
+                }
+
+                // Isi form modal dengan data siswa
+                document.getElementById('siswa-id').value = data.id;
+                document.getElementById('nama_siswa').value = data.nama_siswa;
+                document.getElementById('nipd').value = data.nipd;
+                document.getElementById('nisn').value = data.nisn;
+                document.getElementById('nik').value = data.nik;
+                document.getElementById('nomor_kk').value = data.nomor_kk;
+                document.getElementById('tempat_lahir').value = data.tempat_lahir;
+                document.getElementById('tanggal_lahir').value = data.tanggal_lahir;
+                document.getElementById('jenis_kelamin').value = data.jenis_kelamin;
+                document.getElementById('agama').value = data.agama;
+                document.getElementById('alamat').value = data.alamat;
+                document.getElementById('kode_pos').value = data.kode_pos;
+                document.getElementById('nama_ayah').value = data.nama_ayah;
+                document.getElementById('pekerjaan_ayah').value = data.pekerjaan_ayah;
+                document.getElementById('penghasilan_ayah').value = data.penghasilan_ayah;
+                document.getElementById('nama_ibu').value = data.nama_ibu;
+                document.getElementById('pekerjaan_ibu').value = data.pekerjaan_ibu;
+                document.getElementById('penghasilan_ibu').value = data.penghasilan_ibu;
+                document.getElementById('kelas').value = data.kelas;
+
+                // --- LOGIKA KONTROL AKSES TOMBOL ---
+                const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+                const btnUpdate = document.getElementById('btn-update-siswa');
+                const btnDelete = document.getElementById('btn-delete-siswa');
+
+                if (loggedInUserJSON && JSON.parse(loggedInUserJSON).role === 'superadmin') {
+                    // Jika sudah login DAN perannya superadmin, tampilkan tombol.
+                    btnUpdate.classList.remove('d-none');
+                    btnDelete.classList.remove('d-none');
+                } else {
+                    // Jika belum login ATAU perannya bukan superadmin, sembunyikan tombol.
+                    btnUpdate.classList.add('d-none');
+                    btnDelete.classList.add('d-none');
+                    btnLuluskan.classList.add('d-none');
+                }
+
+                // Ubah judul modal dan tampilan tombol
+                document.getElementById('siswaModalLabel').textContent = 'Detail / Update Data Siswa';
+                document.getElementById('btn-konfirmasi-siswa').classList.add('d-none');
+
+                // Tampilkan modal
+                siswaModal.show();
+            }
+        });
+
+        // Event listener untuk tombol UPDATE di modal
+        document.getElementById('btn-update-siswa').addEventListener('click', async () => {
+            const siswaId = document.getElementById('siswa-id').value;
+            if (!siswaId) return;
+
+            // Kumpulkan data dari form (sama seperti saat tambah data)
+            const updatedData = {
+                nama_siswa: document.getElementById('nama_siswa').value,
+                nipd: document.getElementById('nipd').value,
+                nisn: document.getElementById('nisn').value,
+                nik: document.getElementById('nik').value,
+                nomor_kk: document.getElementById('nomor_kk').value,
+                tempat_lahir: document.getElementById('tempat_lahir').value,
+                tanggal_lahir: document.getElementById('tanggal_lahir').value,
+                jenis_kelamin: document.getElementById('jenis_kelamin').value,
+                agama: document.getElementById('agama').value,
+                alamat: document.getElementById('alamat').value,
+                kode_pos: document.getElementById('kode_pos').value,
+                nama_ayah: document.getElementById('nama_ayah').value,
+                pekerjaan_ayah: document.getElementById('pekerjaan_ayah').value,
+                penghasilan_ayah: document.getElementById('penghasilan_ayah').value,
+                nama_ibu: document.getElementById('nama_ibu').value,
+                pekerjaan_ibu: document.getElementById('pekerjaan_ibu').value,
+                penghasilan_ibu: document.getElementById('penghasilan_ibu').value,
+                kelas: document.getElementById('kelas').value,
+            };
+
+            const { error } = await supabaseClient.from('tabelsiswa').update(updatedData).eq('id', siswaId);
+
+            if (error) {
+                alert('Gagal mengupdate data: ' + error.message);
+            } else {
+                alert('Data siswa berhasil diupdate!');
+                siswaModal.hide();
+                await loadSiswa();
+            }
+        });
+
+        // Event listener untuk tombol DELETE di modal
+        document.getElementById('btn-delete-siswa').addEventListener('click', async () => {
+            const siswaId = document.getElementById('siswa-id').value;
+            if (!siswaId) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
+                const { error } = await supabaseClient.from('tabelsiswa').delete().eq('id', siswaId);
+
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data siswa berhasil dihapus.');
+                    siswaModal.hide();
+                    await loadSiswa();
+                }
+            }
+        });
+
+        // Fungsi untuk memindahkan fokus dengan tombol Enter
+        function handleEnterAsTab(formElement) {
+            const focusableElements = Array.from(
+                formElement.querySelectorAll('input:not([type=hidden]), select, textarea')
+            );
+            const submitButton = formElement.querySelector('button[type="submit"]');
+
+            formElement.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+                    event.preventDefault();
+                    const currentIndex = focusableElements.indexOf(event.target);
+                    const nextElement = focusableElements[currentIndex + 1];
+
+                    if (nextElement) {
+                        nextElement.focus();
+                    } else if (submitButton) {
+                        submitButton.focus();
+                    }
+                }
+            });
+        }
+
+        // Event listener untuk tombol Refresh Rekap
+        document.getElementById('refresh-rekap-button').addEventListener('click', async () => {
+            const refreshButton = document.getElementById('refresh-rekap-button');
+            const icon = refreshButton.querySelector('i');
+
+            // Nonaktifkan tombol dan tampilkan ikon berputar
+            refreshButton.disabled = true;
+            icon.classList.add('fa-spin');
+
+            await loadSiswa(); // Memanggil fungsi utama untuk memuat ulang tabel dan rekap
+
+            // Aktifkan kembali tombol dan hapus ikon berputar
+            refreshButton.disabled = false;
+            icon.classList.remove('fa-spin');
+        });
+
+        // Event listener untuk pencarian
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+
+        // Cari saat pengguna mengetik
+        searchInput.addEventListener('input', () => {
+            loadSiswa(searchInput.value.trim());
+        });
+
+        // Cari saat tombol search diklik (sebagai fallback)
+        searchButton.addEventListener('click', () => {
+            loadSiswa(searchInput.value.trim());
+        });
+
+        // Event listener untuk tombol Export
+        document.getElementById('btn-export-excel').addEventListener('click', async () => {
+            const exportButton = document.getElementById('btn-export-excel');
+            const originalHtml = exportButton.innerHTML;
+            
+            // Nonaktifkan tombol dan tampilkan spinner
+            exportButton.disabled = true;
+            exportButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Exporting...';
+
+            try {
+                // Ambil SEMUA data langsung dari Supabase, bukan dari variabel lokal
+                const { data: allSiswaData, error } = await supabaseClient
+                    .from('tabelsiswa')
+                    .select('*')
+                    .order('nama_siswa', { ascending: true });
+
+                if (error) {
+                    alert('Gagal mengambil data untuk export: ' + error.message);
+                    return;
+                }
+
+                if (allSiswaData.length === 0) {
+                    alert('Tidak ada data di database untuk di-export.');
+                    return;
+                }
+
+                // 1. Siapkan data untuk export
+                const dataToExport = allSiswaData.map((siswa, index) => ({
+                    'No': index + 1,
+                    'Nama Siswa': siswa.nama_siswa, 'NIPD': siswa.nipd, 'NISN': siswa.nisn,
+                    'NIK': siswa.nik, 'No. KK': siswa.nomor_kk, 'Tempat Lahir': siswa.tempat_lahir,
+                    'Tanggal Lahir': siswa.tanggal_lahir, 'Jenis Kelamin': siswa.jenis_kelamin,
+                    'Agama': siswa.agama, 'Alamat': siswa.alamat, 'Kode Pos': siswa.kode_pos,
+                    'Nama Ayah': siswa.nama_ayah, 'Pekerjaan Ayah': siswa.pekerjaan_ayah,
+                    'Penghasilan Ayah': siswa.penghasilan_ayah, 'Nama Ibu': siswa.nama_ibu,
+                    'Pekerjaan Ibu': siswa.pekerjaan_ibu, 'Penghasilan Ibu': siswa.penghasilan_ibu,
+                    'Kelas Saat Ini': siswa.kelas
+                }));
+
+                // 2. Buat worksheet dari data JSON
+                const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Data Siswa");
+
+                // 3. Buat dan unduh file Excel
+                XLSX.writeFile(workbook, "Data_Siswa_Lengkap.xlsx");
+
+            } finally {
+                // Kembalikan tombol ke keadaan semula setelah selesai (baik berhasil maupun gagal)
+                exportButton.disabled = false;
+                exportButton.innerHTML = originalHtml;
+            }
+        });
+
+        // --- FUNGSI UNTUK IMPORT CSV ---
+
+        const importButton = document.getElementById('btn-import-csv');
+        const csvFileInput = document.getElementById('csv-file-input');
+
+        // 1. Saat tombol "Import" diklik, picu input file yang tersembunyi
+        importButton.addEventListener('click', () => {
+            csvFileInput.click();
+        });
+
+        // 2. Saat pengguna memilih file, proses file tersebut
+        csvFileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return; // Tidak ada file yang dipilih
+            }
+
+            // Ubah tampilan tombol menjadi loading
+            importButton.disabled = true;
+            importButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Importing...';
+
+            // 3. Gunakan Papa Parse untuk membaca file CSV
+            Papa.parse(file, {
+                header: true, // Anggap baris pertama adalah header
+                skipEmptyLines: true,
+                complete: async (results) => {
+                    const dataToInsert = results.data;
+
+                    if (dataToInsert.length === 0) {
+                        alert('File CSV kosong atau tidak valid.');
+                        resetImportButton();
+                        return;
+                    }
+
+                    // Definisikan pemetaan dari header CSV ke nama kolom Supabase
+                    // Pastikan ini cocok persis dengan nama kolom di tabel 'tabelsiswa' Anda
+                    const csvHeaderToSupabaseColumnMap = {
+                        "nama": "nama_siswa", // <-- TAMBAHKAN PEMETAAN BARU DI SINI
+                        "Nama Siswa": "nama_siswa",
+                        "NIPD": "nipd",
+                        "NISN": "nisn",
+                        "NIK": "nik",
+                        "No. KK": "nomor_kk",
+                        "Tempat Lahir": "tempat_lahir",
+                        "Tanggal Lahir": "tanggal_lahir",
+                        "Jenis Kelamin": "jenis_kelamin",
+                        "Agama": "agama",
+                        "Alamat": "alamat",
+                        "Kode Pos": "kode_pos",
+                        "Nama Ayah": "nama_ayah",
+                        "Pekerjaan Ayah": "pekerjaan_ayah",
+                        "Penghasilan Ayah": "penghasilan_ayah",
+                        "Nama Ibu": "nama_ibu",
+                        "Pekerjaan Ibu": "pekerjaan_ibu",
+                        "Penghasilan Ibu": "penghasilan_ibu",
+                        "Kelas Saat Ini": "kelas",
+                        // Tambahkan juga versi lowercase jika header CSV mungkin bervariasi
+                        "nama siswa": "nama_siswa", "no. kk": "nomor_kk", "tempat lahir": "tempat_lahir",
+                        "tanggal lahir": "tanggal_lahir", "jenis kelamin": "jenis_kelamin", "agama": "agama",
+                        "alamat": "alamat", "kode pos": "kode_pos", "nama ayah": "nama_ayah",
+                        "pekerjaan ayah": "pekerjaan_ayah", "penghasilan ayah": "penghasilan_ayah",
+                        "nama ibu": "nama_ibu", "pekerjaan ibu": "pekerjaan_ibu", "penghasilan ibu": "penghasilan_ibu",
+                        "kelas": "kelas" // Jika header hanya "kelas"
+                    };
+
+                    // Transformasi data untuk mencocokkan nama kolom Supabase
+                    const transformedData = dataToInsert.map(row => {
+                        const newRow = {};
+                        for (const csvHeader in row) {
+                            if (Object.prototype.hasOwnProperty.call(row, csvHeader)) {
+                                const supabaseColumn = csvHeaderToSupabaseColumnMap[csvHeader] || csvHeaderToSupabaseColumnMap[csvHeader.toLowerCase()];
+                                if (supabaseColumn) {
+                                    let value = row[csvHeader] === '' ? null : row[csvHeader];
+
+                                    // --- PERBAIKAN FORMAT TANGGAL ---
+                                    // Jika kolomnya adalah 'tanggal_lahir' dan nilainya ada (bukan null)
+                                    if (supabaseColumn === 'tanggal_lahir' && value) {
+                                        const parts = value.split('/'); // Contoh: "18/10/2025" -> ["18", "10", "2025"]
+                                        if (parts.length === 3) {
+                                            // Ubah format menjadi YYYY-MM-DD
+                                            value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                        }
+                                    }
+                                    // --- AKHIR PERBAIKAN ---
+                                    newRow[supabaseColumn] = value;
+                                }
+                            }
+                        }
+                        return newRow;
+                    }).filter(obj => Object.keys(obj).length > 0); // Hapus baris yang kosong setelah transformasi
+
+                    if (transformedData.length === 0) {
+                        alert('Tidak ada data yang valid untuk diimpor setelah pemrosesan. Pastikan header CSV Anda cocok dengan format yang diharapkan.');
+                        resetImportButton();
+                        return;
+                    }
+
+                    // 4. Kirim data yang sudah di-parse ke Supabase
+                    const { error } = await supabaseClient
+                        .from('tabelsiswa')
+                        .insert(transformedData); // Gunakan data yang sudah ditransformasi
+
+                    if (error) {
+                        alert('Gagal mengimpor data: ' + error.message + '\n\nPastikan nama kolom di file CSV Anda cocok dengan nama kolom di database.');
+                        console.error('Supabase insert error:', error);
+                    } else {
+                        alert(`Berhasil mengimpor ${dataToInsert.length} baris data siswa!`);
+                        await loadSiswa(); // Muat ulang data di tabel untuk menampilkan data baru
+                    }
+
+                    // 5. Kembalikan tombol ke keadaan semula
+                    resetImportButton();
+                },
+                error: (error) => {
+                    alert('Gagal mem-parsing file CSV: ' + error.message);
+                    console.error('Papa Parse error:', error);
+                    resetImportButton();
+                }
+            });
+
+            // Kosongkan input file agar bisa memilih file yang sama lagi
+            event.target.value = '';
+        });
+
+        function resetImportButton() {
+            importButton.disabled = false;
+            importButton.innerHTML = '<i class="fas fa-file-import me-1"></i> Import';
+        }
+
+
+        // --- AKHIR FUNGSI IMPORT CSV ---
+
+        // --- FUNGSI UNTUK UNDUH TEMPLATE CSV ---
+        document.getElementById('btn-download-template').addEventListener('click', () => {
+            // Header ini HARUS SAMA PERSIS dengan KUNCI (key) di csvHeaderToSupabaseColumnMap
+            const headers = [
+                "Nama Siswa", "NIPD", "NISN", "NIK", "No. KK", 
+                "Tempat Lahir", "Tanggal Lahir", "Jenis Kelamin", "Agama", 
+                "Alamat", "Kode Pos", "Nama Ayah", "Pekerjaan Ayah", 
+                "Penghasilan Ayah", "Nama Ibu", "Pekerjaan Ibu", 
+                "Penghasilan Ibu", "Kelas Saat Ini"
+            ];
+
+            // Contoh baris data (opsional, untuk panduan)
+            const exampleRow = "Budi Sanjaya,12345,54321,3201...,3201...,Jakarta,10/05/2008,Laki-laki,Islam,Jl. Merdeka No. 1,16451,Ahmad,Wiraswasta,2.000.000-5.000.000,Siti,Ibu Rumah Tangga,dibawah 1.000.000,X";
+
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n"
+                + exampleRow;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "template_import_siswa.csv");
+            document.body.appendChild(link); // Diperlukan untuk Firefox
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Event Listener Utama
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            loadSchoolIdentity();
+            populateLoginUsernames();
+            loadSiswa();
+            populateKelasDropdown();
+            handleEnterAsTab(formSiswa); // Terapkan fungsi Enter as Tab ke form siswa
+        });
+
+        // --- LOGIKA BARU UNTUK TOMBOL TAMBAH DATA ---
+        document.getElementById('btn-tambah-siswa').addEventListener('click', function(event) {
+            const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+            
+            if (!loggedInUserJSON) {
+                // Jika BELUM login, tampilkan modal notifikasi.
+                const loginRequiredModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                loginRequiredModal.show();
+            } else {
+                // Jika SUDAH login, periksa perannya.
+                const userData = JSON.parse(loggedInUserJSON);
+                if (userData.role === 'superadmin') {
+                    // Jika superadmin, buka modal tambah data.
+                    // Kita teruskan elemen tombol sebagai 'relatedTarget' agar form direset dengan benar.
+                    siswaModal.show(this);
+                } else {
+                    // Jika perannya bukan superadmin, tampilkan alert.
+                    alert('Maaf, fitur tambah data hanya dapat di akses oleh Admin Utama.');
+                }
+            }
+        });
+    </script>
+    <script>
+        // Event listener untuk membersihkan form saat modal dibuka untuk menambah data
+        document.getElementById('siswaModal').addEventListener('show.bs.modal', (event) => {
+            // Cek apakah modal dibuka oleh tombol 'Tambah' (bukan dari tombol 'Klik Me')
+            if (event.relatedTarget && event.relatedTarget.id === 'btn-tambah-siswa') {
+                document.getElementById('form-siswa').reset();
+                document.getElementById('siswaModalLabel').textContent = 'Tambah Data Siswa Baru';
+                document.getElementById('btn-konfirmasi-siswa').classList.remove('d-none');
+                document.getElementById('btn-update-siswa').classList.add('d-none');
+                document.getElementById('btn-delete-siswa').classList.add('d-none');
+                document.getElementById('btn-luluskan-siswa').classList.add('d-none');
+                document.getElementById('btn-luluskan-siswa').classList.add('d-none');
+            }
+        });
+    </script>
+
+</body>
+</html>

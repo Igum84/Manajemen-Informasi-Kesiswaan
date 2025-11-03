@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Panggilan</title>
+    <style>
+        /* CSS untuk styling dasar */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 2cm; /* Margin halaman untuk tampilan cetak */
+            box-sizing: border-box;
+            font-size: 12pt;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header dan Kop Surat */
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 4px solid black;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            width: 100px; /* Ukuran logo disesuaikan agar sesuai dengan surat asli */
+            height: auto;
+            object-fit: contain;
+        }
+        
+        .logo-left { 
+            margin-right: 20px;
+        }
+
+        .logo-right {
+            margin-left: 20px;
+        }
+
+        /* Spesifik untuk logo provinsi di sebelah kanan */
+        .logo-right .logo {
+            width: 70px;
+        }
+
+        .header-text {
+            flex-grow: 1;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-text p {
+            margin: 0;
+        }
+
+        .header-text .provinsi {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+
+        .header-text .dinas, .header-text .unit {
+            font-size: 11pt;
+            font-weight: normal;
+        }
+
+        .header-text .smk {
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        
+        .alamat {
+            font-size: 10pt;
+            font-weight: normal;
+        }
+
+        /* Isi Surat */
+        .content {
+            line-height: 1.5;
+        }
+
+        .judul-surat {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 5px;
+        }
+
+        .nomor-surat {
+            text-align: center;
+            font-size: 12pt;
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .label {
+            width: 150px; /* Lebar label yang tetap */
+            flex-shrink: 0;
+            padding-right: 10px;
+        }
+
+        .separator {
+            width: 10px;
+            flex-shrink: 0;
+        }
+
+        .value {
+            flex-grow: 1;
+        }
+
+        .section-header {
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .penutup {
+            text-align: justify;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* Tanda Tangan */
+        .signature-block {
+            display: flex;
+            justify-content: flex-end; /* Posisikan ke kanan */
+            text-align: center;
+        }
+
+        .ttd-info {
+            width: 45%; /* Sesuaikan lebar blok tanda tangan */
+        }
+        
+        .ttd-info .date {
+            margin-bottom: 60px; /* Jarak untuk tanda tangan */
+        }
+
+        .ttd-info .name {
+            margin-bottom: 0; /* Mengurangi jarak bawah nama */
+        }
+        .ttd-info .nip {
+            margin-top: 0; /* Mengurangi jarak atas NIP */
+        }
+        /* Penyesuaian khusus berdasarkan gambar */
+        .bold-underline {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* Aturan khusus untuk mencetak */
+        @media print {
+            @page {
+                size: A4; /* Mengatur ukuran kertas menjadi A4 */
+                /* Mengatur margin: atas, kanan, bawah, kiri */
+                margin-top: 2cm;
+                margin-right: 2cm;
+                margin-bottom: 2cm; /* Disesuaikan agar simetris */
+                margin-left: 2.5cm;
+            }
+
+            body {
+                margin: 0; /* Menghilangkan margin default body saat mencetak */
+                padding: 0; /* Menghilangkan padding body saat mencetak */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo-left">
+            <img src="logo.png" alt="Lambang Provinsi Kepulauan Bangka Belitung" class="logo">
+        </div>
+        
+        <div class="header-text">
+            <p class="provinsi">PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG</p>
+            <p class="provinsi">DINAS PENDIDIKAN</p>
+            <p class="unit">UNIT PELAKSANA TEKNIS DINAS SATUAN PENDIDIKAN</p>
+            <p class="smk">SMK NEGERI 1 SIMPANG TERITIP</p>
+            <p class="alamat">Jl.Raya Pangkalpinang, Desa Berang, Kec. Simpang Teritip, Kab. Bangka Barat, 33366</p>
+        </div>
+        
+        <div class="logo-right">
+             <img src="logoprov.png" alt="Logo SMK Negeri 1 Simpang Teritip" class="logo">
+        </div>
+    </div>
+    
+    <div class="content">
+        <p class="judul-surat" id="surat-judul">SURAT PANGGILAN</p>
+        <p class="nomor-surat" id="surat-nomor">NOMOR: ...</p>
+
+        <div class="section-detail">
+            <p>Yang bertanda dibawah ini:</p>
+            <div class="detail-row">
+                <div class="label">Nama</div>
+                <div class="separator">:</div>
+                <div class="value" id="guru-nama">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">NIP</div>
+                <div class="separator">:</div>
+                <div class="value" id="guru-nip">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">Jabatan</div>
+                <div class="separator">:</div>
+                <div class="value" id="guru-jabatan">Memuat...</div>
+            </div>
+            <div class="detail-row" style="align-items: baseline;">
+                <div class="label">Alamat Sekolah</div>
+                <div class="separator">:</div>
+                <div class="value" id="sekolah-alamat">Memuat...</div>
+            </div>
+        </div>
+        
+        <p>Dengan ini, kami memanggil Bapak/Ibu Orangtua/Wali Peserta didik, dalam rangka Perkembangan Peserta Didik:</p>
+
+        <div class="section-detail">
+            <div class="detail-row">
+                <div class="label">Atas Nama</div>
+                <div class="separator">:</div>
+                <div class="value" id="siswa-nama">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">Kelas</div>
+                <div class="separator">:</div>
+                <div class="value" id="siswa-kelas">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">Hari/Tanggal</div>
+                <div class="separator">:</div>
+                <div class="value" id="panggilan-jadwal">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">Waktu</div>
+                <div class="separator">:</div>
+                <div class="value" id="panggilan-waktu">Memuat...</div>
+            </div>
+            <div class="detail-row">
+                <div class="label">Tempat</div>
+                <div class="separator">:</div>
+                <div class="value" id="panggilan-tempat">Memuat...</div>
+            </div>
+        </div>
+
+        <p class="penutup">Demikian Surat Panggilan ini kami sampaikan, besar harapan Kami Bapak/Ibu/Wali peserta didik dapat hadir. Atas perhatian dan kerjasamanya kami ucapkan terimakasih.</p>
+    </div>
+
+    <div class="signature-block">
+        <div class="ttd-info">
+            <p class="date" id="ttd-lokasi-tanggal">..., ...<br>Wali Kelas</p>
+            
+            <p class="name" id="ttd-nama">...</p>
+            <p class="nip" id="ttd-nip">NIP. ...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Supabase & Skrip Dinamis -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SUPABASE_URL = 'https://ntvzirfulfjczoothgza.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dnppcmZ1bGZqY3pvb3RoZ3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MzYxNTksImV4cCI6MjA3NzMxMjE1OX0.EggNCXBCuhuxU6o_aqfz5DzmRzGAcRg710WXbesOZhQ';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const recordId = params.get('id');
+        const isPreview = params.get('preview');
+
+        // Jika ini adalah mode pratinjau, jangan lakukan apa-apa. Biarkan halaman induk yang mengontrol.
+        if (isPreview) {
+            return;
+        }
+
+        if (!recordId) {
+            document.body.innerHTML = '<h1>ID Data Pemanggilan tidak ditemukan.</h1>';
+            return;
+        }
+
+        const { data, error } = await supabaseClient
+            .from('tabelpemanggilan')
+            .select('*')
+            .eq('id', recordId)
+            .single();
+
+        if (error || !data) {
+            document.body.innerHTML = `<h1>Gagal memuat data pemanggilan dengan ID ${recordId}.</h1><p>${error?.message || ''}</p>`;
+            return;
+        }
+
+        // Mengisi data ke dalam elemen HTML
+        document.getElementById('surat-judul').textContent = data.jenis_surat.toUpperCase();
+        document.getElementById('surat-nomor').textContent = `NOMOR: ${data.nomor_surat}`;
+        document.getElementById('guru-nama').textContent = data.nama_guru;
+        document.getElementById('guru-nip').textContent = data.nip;
+        document.getElementById('guru-jabatan').textContent = data.jabatan;
+        document.getElementById('sekolah-alamat').textContent = data.alamat_sekolah;
+        document.getElementById('siswa-nama').textContent = data.nama_siswa;
+        document.getElementById('siswa-kelas').textContent = data.kelas;
+        document.getElementById('panggilan-jadwal').textContent = `${data.hari}, ${new Date(data.tanggal_panggilan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+        document.getElementById('panggilan-waktu').textContent = `${data.waktu} WIB`;
+        document.getElementById('panggilan-tempat').textContent = data.tempat;
+        document.getElementById('ttd-lokasi-tanggal').innerHTML = `${data.tempat_cetak}, ${new Date(data.tanggal_cetak).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}<br>${data.jabatan}`;
+        document.getElementById('ttd-nama').textContent = data.nama_guru;
+        document.getElementById('ttd-nip').textContent = `NIP. ${data.nip}`;
+
+        // Otomatis memicu dialog cetak setelah data terisi
+        window.print();
+    });
+</script>
+
+</body>
+</html>

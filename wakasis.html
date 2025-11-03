@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Waka Kesiswaan - Manajemen Sistem Kesiswaan</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-color: #e0e5ec; /* Warna latar belakang utama untuk efek 3D */
+            --primary-blue: #007bff; /* Warna tombol/highlight default */
+            --dark-text: #343a40;
+            /* Bayangan untuk efek 3D menonjol */
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --protruding-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            --inset-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            --widget-radius: 18px; /* Sudut membulat yang lebih besar */
+        }
+
+        /* Reset dan Layout Dasar */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color); 
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-text);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            padding-top: 80px; /* Memberi ruang untuk navbar fixed-top */
+            padding-bottom: 40px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: var(--bg-color) !important;
+            box-shadow: var(--protruding-shadow);
+            color: var(--dark-text);
+        }
+        .navbar-brand strong {
+            color: var(--dark-text);
+        }
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            box-shadow: var(--protruding-shadow);
+            object-fit: cover;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .navbar-toggler:hover, .navbar-toggler:focus {
+            box-shadow: var(--inset-shadow);
+            outline: none;
+        }
+
+        /* Offcanvas Menu Styling */
+        .offcanvas.offcanvas-end {
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+        }
+        .navbar-toggler:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .offcanvas-header {
+            background-color: var(--bg-color); 
+            border-bottom: 1px solid var(--shadow-dark);
+            color: var(--dark-text);
+        }
+
+        .user-card {
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+        }
+        .user-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: var(--protruding-shadow);
+            padding: 5px;
+            background-color: var(--bg-color);
+        }
+
+        .user-card .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .user-card .btn, .user-card .btn-login {
+            box-shadow: var(--protruding-shadow);
+            border: none;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .user-card .btn:hover, .user-card .btn-login:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .user-card #logout-button {
+            color: #dc3545;
+        }
+
+        .offcanvas-body .nav-link {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            padding-left: 1.5rem; /* DIGESER: Memberi jarak dari tepi kiri */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .offcanvas-body .nav-link i {
+            margin-right: 0.75rem; /* DIGESER: Jarak antara ikon dan teks */
+            width: 20px; /* Pastikan ikon punya lebar tetap agar rapi */
+            text-align: center;
+        }
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link:focus {
+            box-shadow: var(--inset-shadow);
+            transform: translateY(2px);
+        }
+        .offcanvas-body .nav-link.active {
+            color: var(--primary-blue); 
+            box-shadow: var(--inset-shadow);
+            font-weight: 600;
+        }
+
+        /* Footer Styling */
+        .footer {
+            padding: 2rem 0;
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            box-shadow: var(--inset-shadow); 
+        }
+        .footer-school-name, .footer-school-address {
+            color: var(--dark-text);
+        }
+        .footer .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 10px;
+            font-size: 1.4rem;
+            color: var(--dark-text);
+            background-color: var(--bg-color);
+            box-shadow: var(--protruding-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .footer .social-icons a:hover {
+            box-shadow: var(--inset-shadow);
+        }
+
+        /* Custom Page Styles */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light);
+            margin-bottom: 2rem !important;
+            text-align: center;
+        }
+        .main-card {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: var(--widget-radius);
+            box-shadow: var(--protruding-shadow);
+            padding: 2rem;
+        }
+        .form-control, .form-select {
+            background-color: var(--bg-color);
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--inset-shadow);
+            color: var(--dark-text);
+            transition: box-shadow 0.2s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: var(--inset-shadow), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            padding: 8px;
+            box-shadow: var(--protruding-shadow);
+        }
+        .action-buttons .btn {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: box-shadow 0.2s ease;
+            padding: 0.5rem 1.2rem;
+        }
+        .action-buttons .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+        .action-buttons .btn-primary {
+            color: var(--primary-blue);
+        }
+        .action-buttons .btn-danger {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <img src="logo.png" alt="Logo Sekolah" class="me-2">
+                    <strong>Manajemen Kesiswaan</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" title="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu Utama</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="user-card p-3 text-center">
+                <img id="user-avatar" src="logo.png" alt="Foto User">
+                <div id="user-info" class="d-none mt-3">
+                    <div class="user-name mb-3">Nama Pengguna</div>
+                    <a href="#" id="logout-button" class="btn btn-sm">Logout</a>
+                </div>
+                <div id="login-prompt" class="mt-3">
+                    <button type="button" class="btn btn-sm btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+            </div>
+            <ul class="navbar-nav justify-content-end flex-grow-1 p-3">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-home"></i> Beranda</a></li>
+                <li id="admin-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturanadmin.html"><i class="fa-solid fa-user-shield"></i> Pengaturan Administrator</a></li>
+                <li id="identitas-sekolah-menu-item" class="nav-item d-none"><a class="nav-link" href="identitas.html"><i class="fa-solid fa-school"></i> Identitas Sekolah</a></li>
+                <li id="profil-waka-menu-item" class="nav-item d-none"><a class="nav-link active" href="wakasis.html"><i class="fa-solid fa-user-tie"></i> Profil Waka Kesiswaan</a></li>
+                <li id="pengaturan-data-menu-item" class="nav-item d-none"><a class="nav-link" href="pengaturandata.html"><i class="fa-solid fa-database"></i> Pengaturan Data</a></li>
+                <li class="nav-item"><a class="nav-link" href="datasiswa.html"><i class="fa-solid fa-users"></i> Data Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="prestasi.html"><i class="fa-solid fa-trophy"></i> Prestasi Siswa</a></li>
+                <li class="nav-item"><a class="nav-link" href="bantuan.html"><i class="fa-solid fa-hand-holding-heart"></i> Bantuan Pendidikan</a></li>
+                <li class="nav-item"><a class="nav-link" href="putussekolah.html"><i class="fa-solid fa-user-slash"></i> Putus Sekolah</a></li>
+                <li class="nav-item"><a class="nav-link" href="mutasi.html"><i class="fa-solid fa-right-left"></i> Mutasi</a></li>
+                <li class="nav-item"><a class="nav-link" href="alumni.html"><i class="fa-solid fa-user-graduate"></i> Alumni</a></li>
+                <li class="nav-item"><a class="nav-link" href="pembinaan.html"><i class="fa-solid fa-chalkboard-user"></i> Pembinaan Guru/Walas/BK</a></li>
+                <li class="nav-item"><a class="nav-link" href="pemanggilan.html"><i class="fa-solid fa-print"></i> Cetak Berkas</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Profil Waka Kesiswaan</h1>
+
+        <div class="main-card">
+            <div class="card-body p-0">
+                <form id="waka-form">
+                    <div class="text-center mb-4">
+                        <img src="https://via.placeholder.com/180" alt="Foto Profil Waka Kesiswaan" id="waka-photo-preview" class="profile-photo">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-nama" class="form-label">Nama</label>
+                            <input type="text" class="form-control" id="waka-nama" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-nip" class="form-label">NIP</label>
+                            <input type="text" class="form-control" id="waka-nip">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-tempat-lahir" class="form-label">Tempat Lahir</label>
+                            <input type="text" class="form-control" id="waka-tempat-lahir">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-tanggal-lahir" class="form-label">Tanggal Lahir</label>
+                            <input type="date" class="form-control" id="waka-tanggal-lahir">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-jenis-kelamin" class="form-label">Jenis Kelamin</label>
+                            <select class="form-select" id="waka-jenis-kelamin">
+                                <option selected disabled value="">Pilih...</option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="waka-agama" class="form-label">Agama</label>
+                            <input type="text" class="form-control" id="waka-agama">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="waka-alamat" class="form-label">Alamat</label>
+                        <textarea class="form-control" id="waka-alamat" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="waka-photo" class="form-label">Upload Photo</label>
+                        <input class="form-control" type="file" id="waka-photo" accept="image/png, image/jpeg">
+                        <div class="form-text">Kosongkan jika tidak ingin mengganti foto.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="waka-password-utama" class="form-label">Password Utama</label>
+                        <input type="password" class="form-control" id="waka-password-utama">
+                        <div class="form-text">Kosongkan jika tidak ingin mengubah password.</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 action-buttons">
+                        <button type="submit" class="btn btn-primary order-md-3"><i class="fas fa-save me-1"></i> Simpan Perubahan</button>
+                        <a href="index.html" class="btn btn-secondary order-md-2"><i class="fas fa-home me-1"></i> Kembali</a>
+                        <button type="button" id="delete-button" class="btn btn-danger order-md-1 me-md-auto" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"><i class="fas fa-trash me-1"></i> Hapus Profil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="box-shadow: none;"> <!-- Modal Datar -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Konfirmasi Hapus Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="delete-confirm-form">
+                    <div class="modal-body">
+                        <p>Masukan Password Utama untuk menghapus data Wakasis.</p>
+                        <div id="delete-error-alert" class="alert alert-danger d-none" role="alert">
+                            Maaf, anda tidak punya akses untuk menghapus data.
+                        </div>
+                        <label for="delete-confirm-password" class="form-label">Password Utama</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="delete-confirm-password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="toggleDeletePassword"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger" id="confirm-delete-button">Konfirmasi Hapus</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p id="footer-school-name" class="footer-school-name">Nama Sekolah Anda</p>
+            <p id="footer-school-address" class="footer-school-address">Alamat Sekolah</p>
+            <div class="social-icons mb-2">
+                <a href="#" class="facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="youtube" aria-label="Youtube"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="col-12 text-center mt-3">
+                <small>&copy; Kenji Studio Developer 2025.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Skrip Kustom -->
+    <script>
+        // 1. Inisialisasi Klien Supabase
+        const SUPABASE_URL = 'https://ntvzirfulfjczoothgza.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dnppcmZ1bGZqY3pvb3RoZ3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MzYxNTksImV4cCI6MjA3NzMxMjE1OX0.EggNCXBCuhuxU6o_aqfz5DzmRzGAcRg710WXbesOZhQ';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Variabel global untuk menyimpan ID dan path foto saat ini
+        let currentWakaId = null;
+        let currentPhotoPath = null;
+
+        // Fungsi untuk memuat identitas sekolah dari localStorage
+        function loadSchoolIdentity() {
+            const identityDataJSON = localStorage.getItem('schoolIdentity');
+            if (identityDataJSON) {
+                const identityData = JSON.parse(identityDataJSON);
+                const schoolName = identityData?.nama_sekolah ?? "Nama Sekolah Anda";
+                const schoolLogo = identityData?.logo_sekolah ?? "logo.png";
+                const schoolAddress = identityData?.alamat ?? "Alamat Sekolah";
+                document.querySelectorAll('.navbar-brand strong').forEach(el => el.textContent = schoolName);
+                document.querySelectorAll('.navbar-brand img').forEach(el => el.src = schoolLogo);
+                document.getElementById('footer-school-name').textContent = schoolName;
+                document.getElementById('footer-school-address').textContent = schoolAddress;
+                document.querySelector('footer small').innerHTML = `&copy; ${new Date().getFullYear()} ${schoolName}. All Rights Reserved.`;
+            }
+        }
+
+        // 2. Logika Halaman (Login & Logout)
+        document.addEventListener('DOMContentLoaded', () => {
+            const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+            if (loggedInUserJSON) {
+                const userData = JSON.parse(loggedInUserJSON);
+                document.getElementById('user-avatar').src = userData.photo || 'https://via.placeholder.com/40';
+                document.querySelector('#user-info .user-name').textContent = userData.username;
+                document.getElementById('user-info').classList.remove('d-none');
+                document.getElementById('login-prompt').classList.add('d-none');
+                document.getElementById('admin-menu-item').classList.remove('d-none');
+                document.getElementById('identitas-sekolah-menu-item').classList.remove('d-none');
+                document.getElementById('profil-waka-menu-item').classList.remove('d-none');
+                document.getElementById('pengaturan-data-menu-item').classList.remove('d-none');
+            } else {
+                alert('Anda harus login untuk mengakses halaman ini.');
+                window.location.href = 'index.html';
+            }
+
+            document.getElementById('logout-button').addEventListener('click', (event) => {
+                event.preventDefault();
+                sessionStorage.removeItem('loggedInUser');
+                alert('Anda telah berhasil logout.');
+                window.location.href = 'index.html';
+            });
+        });
+
+        // 3. Fungsi untuk memuat data Waka dari Supabase
+        async function loadWakaProfile() {
+            const { data, error } = await supabaseClient.from('tabelwakasis').select('*').limit(1).single();
+
+            if (data) {
+                document.getElementById('waka-nama').value = data.nama || '';
+                document.getElementById('waka-nip').value = data.nip || '';
+                document.getElementById('waka-tempat-lahir').value = data.tempat_lahir || '';
+                document.getElementById('waka-tanggal-lahir').value = data.tanggal_lahir || '';
+                document.getElementById('waka-jenis-kelamin').value = data.jenis_kelamin || '';
+                document.getElementById('waka-agama').value = data.agama || '';
+                document.getElementById('waka-alamat').value = data.alamat || '';
+                document.getElementById('waka-password-utama').value = ''; // Jangan tampilkan password yang sudah ada
+                document.getElementById('waka-photo-preview').src = data.photo || 'https://via.placeholder.com/180';
+
+                currentWakaId = data.id;
+                if (data.photo) {
+                    try {
+                        currentPhotoPath = data.photo.split('/aset/')[1];
+                    } catch (e) {
+                        currentPhotoPath = null;
+                    }
+                }
+            } else {
+                console.log("Belum ada data profil Waka Kesiswaan.");
+            }
+        }
+
+        // 4. Event listener untuk form submit (Simpan & Update)
+        const wakaForm = document.getElementById('waka-form');
+        wakaForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const saveButton = wakaForm.querySelector('button[type="submit"]');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+            const photoFile = document.getElementById('waka-photo').files[0];
+            let photoUrl = document.getElementById('waka-photo-preview').src;
+            const passwordUtama = document.getElementById('waka-password-utama').value;
+
+            if (photoFile) {
+                if (currentPhotoPath) {
+                    await supabaseClient.storage.from('aset').remove([currentPhotoPath]);
+                }
+                const filePath = `waka-photos/${Date.now()}-${photoFile.name}`;
+                const { error: uploadError } = await supabaseClient.storage.from('aset').upload(filePath, photoFile);
+
+                if (uploadError) {
+                    alert('Gagal mengupload foto: ' + uploadError.message);
+                    saveButton.disabled = false;
+                    saveButton.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Perubahan';
+                    return;
+                }
+                const { data: urlData } = supabaseClient.storage.from('aset').getPublicUrl(filePath);
+                photoUrl = urlData.publicUrl;
+            }
+
+            const wakaData = {
+                nama: document.getElementById('waka-nama').value,
+                nip: document.getElementById('waka-nip').value,
+                tempat_lahir: document.getElementById('waka-tempat-lahir').value,
+                tanggal_lahir: document.getElementById('waka-tanggal-lahir').value,
+                jenis_kelamin: document.getElementById('waka-jenis-kelamin').value,
+                agama: document.getElementById('waka-agama').value,
+                alamat: document.getElementById('waka-alamat').value,
+                photo: photoUrl,
+                ...(passwordUtama && { password: passwordUtama }) // Menggunakan nama kolom 'password'
+                // Catatan: Pastikan kolom 'password_utama' ada di tabel 'tabelwakasis' di Supabase.
+                // Untuk keamanan lebih lanjut, password harus di-hash sebelum disimpan.
+                // Implementasi hashing tidak termasuk dalam lingkup ini.
+            };
+
+            let error;
+            if (currentWakaId) {
+                const { error: updateError } = await supabaseClient.from('tabelwakasis').update(wakaData).eq('id', currentWakaId);
+                error = updateError;
+            } else {
+                const { error: insertError } = await supabaseClient.from('tabelwakasis').insert([wakaData]);
+                error = insertError;
+            }
+
+            if (error) {
+                alert('Gagal menyimpan data: ' + error.message);
+            } else {
+                alert('Data profil Waka Kesiswaan berhasil disimpan!');
+                await loadWakaProfile();
+            }
+
+            saveButton.disabled = false;
+            saveButton.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Perubahan';
+        });
+
+        // 5. Logika untuk Modal Konfirmasi Hapus
+        const deleteConfirmModalElement = document.getElementById('deleteConfirmModal');
+        const deleteConfirmForm = document.getElementById('delete-confirm-form');
+        const deleteErrorAlert = document.getElementById('delete-error-alert');
+        const deleteConfirmPasswordInput = document.getElementById('delete-confirm-password');
+
+        // Bersihkan modal setiap kali dibuka
+        deleteConfirmModalElement.addEventListener('show.bs.modal', () => {
+            deleteConfirmForm.reset();
+            deleteErrorAlert.classList.add('d-none');
+        });
+
+        // Logika untuk tombol konfirmasi hapus di dalam modal
+        deleteConfirmForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const confirmButton = document.getElementById('confirm-delete-button');
+            confirmButton.disabled = true;
+            confirmButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memverifikasi...';
+            deleteErrorAlert.classList.add('d-none');
+
+            const enteredPassword = deleteConfirmPasswordInput.value;
+
+            if (!currentWakaId) {
+                alert('Tidak ada data untuk dihapus.');
+                confirmButton.disabled = false;
+                confirmButton.innerHTML = 'Konfirmasi Hapus';
+                return;
+            }
+
+            // Ambil password dari database untuk verifikasi
+            const { data, error: fetchError } = await supabaseClient
+                .from('tabelwakasis')
+                .select('password')
+                .eq('id', currentWakaId)
+                .single();
+
+            if (fetchError || !data) {
+                alert('Gagal memverifikasi password. Coba lagi.');
+            } else if (data.password === enteredPassword) {
+                // --- PASSWORD COCOK, LANJUTKAN HAPUS ---
+                if (currentPhotoPath) {
+                    await supabaseClient.storage.from('aset').remove([currentPhotoPath]);
+                }
+                const { error } = await supabaseClient.from('tabelwakasis').delete().eq('id', currentWakaId);
+                if (error) {
+                    alert('Gagal menghapus data: ' + error.message);
+                } else {
+                    alert('Data profil berhasil dihapus.');
+                    window.location.reload();
+                }
+            } else {
+                // --- PASSWORD SALAH ---
+                deleteErrorAlert.classList.remove('d-none');
+                deleteConfirmPasswordInput.value = ''; // Kosongkan input
+            }
+
+            confirmButton.disabled = false;
+            confirmButton.innerHTML = 'Konfirmasi Hapus';
+        });
+
+        // Logika untuk toggle show/hide password di modal hapus
+        document.getElementById('toggleDeletePassword').addEventListener('click', function() {
+            const type = deleteConfirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            deleteConfirmPasswordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // Fungsi untuk memindahkan fokus dengan tombol Enter
+        function handleEnterAsTab(formElement) {
+            formElement.addEventListener('keydown', (event) => {
+                // Hanya berlaku jika yang ditekan Enter dan bukan di dalam textarea
+                if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+                    event.preventDefault();
+                    const focusableElements = Array.from(formElement.querySelectorAll('input, select, textarea'));
+                    const currentIndex = focusableElements.indexOf(event.target);
+                    const nextElement = focusableElements[currentIndex + 1];
+                    if (nextElement) {
+                        nextElement.focus();
+                    }
+                }
+            });
+        }
+        handleEnterAsTab(document.getElementById('waka-form'));
+
+        // Event Listener Utama saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Panggil semua fungsi inisialisasi di sini
+            loadWakaProfile();
+            loadSchoolIdentity();
+
+            // Logika untuk menu hamburger berdasarkan status login
+            const navMenu = document.querySelector('.offcanvas-body .navbar-nav');
+            navMenu.addEventListener('click', function(event) {
+                const link = event.target.closest('.nav-link');
+                if (!link) return;
+
+                const userAvatar = document.getElementById('user-avatar');
+                const href = link.getAttribute('href');
+
+                // Jika foto profil kosong (belum login) dan link BUKAN Beranda/anchor
+                if (!userAvatar.src && href !== 'index.html' && href !== '#') {
+                    // Cegah navigasi dan tampilkan pesan
+                    event.preventDefault();
+                    alert('Silahkan Login Terlebih Dahulu');
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
