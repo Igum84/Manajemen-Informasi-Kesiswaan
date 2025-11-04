@@ -273,6 +273,11 @@
             box-shadow: var(--inset-shadow);
         }
 
+        /* Menambahkan scroll vertikal pada tabel */
+        .table-responsive {
+            max-height: 65vh; /* Atur tinggi maksimal tabel, contoh: 65% dari tinggi viewport */
+            overflow-y: auto; /* Tampilkan scrollbar vertikal jika konten melebihi max-height */
+        }
         /* Modal Styles */
         .modal-content {
             background-color: var(--bg-color);
@@ -780,8 +785,8 @@
                         <td>${siswa.nama_siswa || '-'}</td>
                         <td>${siswa.nipd || '-'}</td>
                         <td>${siswa.nisn || '-'}</td>
-                        <td>${siswa.nik || '-'}</td>
-                        <td>${siswa.nomor_kk || '-'}</td>
+                        <td>${maskNumber(siswa.nik)}</td>
+                        <td>${maskNumber(siswa.nomor_kk)}</td>
                         <td>${siswa.tempat_lahir || '-'}</td>
                         <td>${siswa.tanggal_lahir || '-'}</td>
                         <td>${siswa.jenis_kelamin || '-'}</td>
@@ -923,6 +928,15 @@
                 const option = `<option value="${item.kelas}">${item.kelas}</option>`;
                 kelasSelect.innerHTML += option;
             });
+        }
+
+        // Fungsi baru untuk menyamarkan nomor sensitif
+        function maskNumber(number) {
+            if (!number || typeof number !== 'string' || number.length <= 8) {
+                return number || '-'; // Kembalikan apa adanya jika tidak valid atau terlalu pendek
+            }
+            // Ambil 8 digit pertama, sisanya ganti dengan 'x'
+            return number.substring(0, 8) + 'x'.repeat(number.length - 8);
         }
 
         // Event listener untuk form tambah siswa
