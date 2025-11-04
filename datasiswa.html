@@ -1177,6 +1177,19 @@
 
         // Event listener untuk tombol Export
         document.getElementById('btn-export-excel').addEventListener('click', async () => {
+            // --- PENGECEKAN AKSES LOGIN ---
+            const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
+            if (!loggedInUserJSON) {
+                // Jika BELUM login, tampilkan modal notifikasi dan hentikan proses.
+                const loginRequiredModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                // Ubah pesan di modal agar lebih relevan
+                const modalBody = document.querySelector('#loginRequiredModal .modal-body p');
+                if (modalBody) modalBody.textContent = 'Silahkan login terlebih dahulu untuk menggunakan fitur export.';
+                loginRequiredModal.show();
+                return; // Hentikan eksekusi fungsi
+            }
+            // --- AKHIR PENGECEKAN AKSES ---
+
             const exportButton = document.getElementById('btn-export-excel');
             const originalHtml = exportButton.innerHTML;
             
