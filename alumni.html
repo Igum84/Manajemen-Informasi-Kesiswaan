@@ -704,10 +704,14 @@
                 return;
             }
 
+            // Simpan data yang berhasil diambil ke variabel global
+            currentAlumniData = data; 
+            // Panggil fungsi untuk update rekapitulasi dengan data yang baru
+            updateRekap(data);
 
             alumniTableBody.innerHTML = '';
             data.forEach((alumni, index) => {
-                const fileLink = alumni.berkas ? `<a href="${alumni.berkas}" target="_blank" class="btn btn-sm btn-action btn-view-file"><i class="fas fa-file-alt pe-none"></i></a>` : 'Tidak Ada';
+                const fileLink = alumni.berkas ? `<a href="${alumni.berkas}" target="_blank" class="btn btn-sm btn-action btn-view-file" title="Lihat Dokumen"><i class="fas fa-file-alt pe-none"></i></a>` : 'Tidak Ada';
                 const row = `
                     <tr>
                         <th>${index + 1}</th>
@@ -734,7 +738,7 @@
                         <td>${alumni.tahun_lulus || '-'}</td>
                         <td class="text-center">${fileLink}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-info btn-detail" data-id="${alumni.id}">Klik Me</button>
+                            <button class="btn btn-sm btn-info btn-detail" data-id="${alumni.id}" title="Lihat Detail/Update">Klik Me</button>
                         </td>
                     </tr>
                 `;
@@ -1119,6 +1123,45 @@
             } finally {
                 btnUpdate.disabled = false;
                 btnUpdate.innerHTML = 'Update';
+            }
+        });
+
+        // Event listener untuk tombol DELETE di modal
+        document.getElementById('btn-delete-alumni').addEventListener('click', async () => {
+            const alumniId = document.getElementById('alumni-id').value;
+            if (!alumniId) return;
+
+            if (confirm('Apakah Anda yakin ingin menghapus data alumni ini secara permanen? Tindakan ini tidak dapat dibatalkan.')) {
+                const btnDelete = document.getElementById('btn-delete-alumni');
+                btnDelete.disabled = true;
+                btnDelete.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menghapus...';
+
+                try {
+                    // 1. Ambil path file dari record sebelum dihapus
+                    const { data: alumni, error: fetchError } = await supabaseClient.from('tabelalumni').select('berkas').eq('id', alumniId).single();
+                    if (fetchError) throw new Error('Gagal memverifikasi file untuk dihapus: ' + fetchError.message);
+
+                    // 2. Hapus record dari database
+                    const { error: deleteError } = await supabaseClient.from('tabelalumni').delete().eq('id', alumniId);
+                    if (deleteError) throw new Error('Gagal menghapus data alumni: ' + deleteError.message);
+
+                    // 3. Hapus file dari storage SETELAH record database berhasil dihapus
+                    if (alumni && alumni.berkas) {
+                        const filePath = alumni.berkas.split('/aset/')[1];
+                        if (filePath) {
+                            await supabaseClient.storage.from('aset').remove([filePath]);
+                        }
+                    }
+
+                    alert('Data alumni berhasil dihapus.');
+                    alumniModal.hide();
+                    await loadAlumni(); // Muat ulang tabel
+                } catch (error) {
+                    alert(error.message);
+                } finally {
+                    btnDelete.disabled = false;
+                    btnDelete.innerHTML = 'Hapus';
+                }
             }
         });
 
