@@ -1036,6 +1036,7 @@
                 pekerjaan_ibu: document.getElementById('pekerjaan_ibu').value,
                 penghasilan_ibu: document.getElementById('penghasilan_ibu').value,
                 kelas: document.getElementById('kelas').value,
+                tahun_masuk: document.getElementById('tahun_masuk').value || null,
             };
 
             const { error } = await supabaseClient.from('tabelsiswa').insert([dataSiswa]);
