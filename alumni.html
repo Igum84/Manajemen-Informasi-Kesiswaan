@@ -408,6 +408,7 @@
                                 <th scope="col">Pekerjaan Ibu</th>
                                 <th scope="col">Penghasilan Ibu</th>
                                 <th scope="col">Kelas Terakhir</th>
+                                <th scope="col">Tahun Masuk</th>
                                 <th scope="col">Jurusan</th>
                                 <th scope="col">Tanggal Lulus</th>
                                 <th scope="col">Tahun Lulus</th>
@@ -520,6 +521,10 @@
                                     <div class="col-sm-4 mb-3">
                                         <label for="jurusan" class="form-label">Jurusan</label>
                                         <select class="form-select" id="jurusan"></select>
+                                    </div>
+                                    <div class="col-sm-4 mb-3">
+                                        <label for="tahun_masuk" class="form-label">Tahun Masuk</label>
+                                        <input type="number" class="form-control" id="tahun_masuk" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -733,6 +738,7 @@
                         <td>${alumni.pekerjaan_ibu || '-'}</td>
                         <td>${alumni.penghasilan_ibu || '-'}</td>
                         <td>${alumni.kelas_terakhir || '-'}</td>
+                        <td>${alumni.tahun_masuk || '-'}</td>
                         <td>${alumni.jurusan || '-'}</td>
                         <td>${alumni.tanggal_lulus || '-'}</td>
                         <td>${alumni.tahun_lulus || '-'}</td>
@@ -950,7 +956,7 @@
 
                 // 3. Siapkan data untuk dimasukkan ke tabelalumni
                 const dataForAlumni = siswaToLulus.map(siswa => {
-                    // Hapus kolom 'id', 'created_at', dan 'kelas' dari data siswa asli
+                    // PERBAIKAN: Hapus hanya kolom yang tidak diperlukan, 'tahun_masuk' sekarang akan ikut disalin
                     const { id, created_at, kelas, ...restOfSiswa } = siswa;
                     return {
                         ...restOfSiswa, // Salin semua data siswa
@@ -967,13 +973,13 @@
                 const { error: insertError } = await supabaseClient.from('tabelalumni').insert(dataForAlumni);
                 if (insertError) throw new Error('Gagal menyimpan ke data alumni: ' + insertError.message);
 
-                // 5. Hapus siswa dari tabelsiswa setelah berhasil dimasukkan ke alumni
-                const { error: deleteError } = await supabaseClient.from('tabelsiswa').delete().in('id', selectedIds);
-                if (deleteError) {
+                // 5. PERUBAHAN: Update kolom 'kelas' menjadi 'Telah Lulus' di tabelsiswa, bukan menghapus.
+                const { error: updateError } = await supabaseClient.from('tabelsiswa').update({ kelas: 'Telah Lulus' }).in('id', selectedIds);
+                if (updateError) {
                     // Ini jarang terjadi, tapi penting untuk dicatat
-                    alert('Siswa berhasil diluluskan, namun gagal dihapus dari daftar siswa aktif. Harap periksa manual. Error: ' + deleteError.message);
+                    alert('Siswa berhasil diluluskan, namun gagal mengupdate status di daftar siswa aktif. Harap periksa manual. Error: ' + updateError.message);
                 } else {
-                    alert(`${selectedCheckboxes.length} siswa berhasil diluluskan!`);
+                    alert(`${selectedCheckboxes.length} siswa berhasil diluluskan dan statusnya telah diupdate.`);
                 }
 
                 luluskanSiswaModal.hide();
@@ -1026,6 +1032,7 @@
                 document.getElementById('pekerjaan_ibu').value = data.pekerjaan_ibu || '';
                 document.getElementById('penghasilan_ibu').value = data.penghasilan_ibu || '';
                 document.getElementById('kelas').value = data.kelas_terakhir || '';
+                document.getElementById('tahun_masuk').value = data.tahun_masuk || '';
                 
                 document.getElementById('jurusan').value = data.jurusan || '';
                 document.getElementById('tanggal_lulus').value = data.tanggal_lulus || '';
@@ -1036,7 +1043,7 @@
 
                 // Nonaktifkan semua field kecuali data kelulusan
                 const fieldsToDisable = [
-                    'nama_siswa', 'nipd', 'nisn', 'nik', 'nomor_kk', 'tempat_lahir', 'tanggal_lahir',
+                    'nama_siswa', 'nipd', 'nisn', 'nik', 'nomor_kk', 'tempat_lahir', 'tanggal_lahir', 'tahun_masuk',
                     'jenis_kelamin', 'agama', 'alamat', 'kode_pos', 'kelas', 'nama_ayah', 'pekerjaan_ayah',
                     'penghasilan_ayah', 'nama_ibu', 'pekerjaan_ibu', 'penghasilan_ibu'
                 ];
@@ -1241,7 +1248,7 @@
                         'Nama Ayah': alumni.nama_ayah, 'Pekerjaan Ayah': alumni.pekerjaan_ayah,
                         'Penghasilan Ayah': alumni.penghasilan_ayah, 'Nama Ibu': alumni.nama_ibu,
                         'Pekerjaan Ibu': alumni.pekerjaan_ibu, 'Penghasilan Ibu': alumni.penghasilan_ibu,
-                        'Kelas Terakhir': alumni.kelas_terakhir, 'Jurusan': alumni.jurusan,
+                        'Kelas Terakhir': alumni.kelas_terakhir, 'Tahun Masuk': alumni.tahun_masuk, 'Jurusan': alumni.jurusan,
                         'Tanggal Lulus': alumni.tanggal_lulus, 'Tahun Lulus': alumni.tahun_lulus,
                         'Link Dokumen': alumni.berkas
                     }));
