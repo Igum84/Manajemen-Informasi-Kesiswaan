@@ -252,6 +252,10 @@
             text-align: center;
             color: var(--dark-text);
             font-weight: 600;
+            /* PERBAIKAN: Membuat SEMUA header tabel tetap di atas saat scroll */
+            position: sticky;
+            top: 0;
+            z-index: 1; /* Memastikan header di atas konten tabel */
             box-shadow: var(--inset-shadow); /* Efek cekung untuk header */
         }
         .table td, .table th {
@@ -874,13 +878,21 @@
             }
 
             // 1. Hitung Jumlah Siswa, Laki-laki, dan Perempuan
-            const totalSiswa = siswaData.length;
+            const totalData = siswaData.length;
+            const siswaAktif = siswaData.filter(s => s.kelas !== 'Telah Lulus').length;
+            const siswaLulus = totalData - siswaAktif;
             const jumlahLaki = siswaData.filter(s => s.jenis_kelamin === 'Laki-laki').length;
-            const jumlahPerempuan = siswaData.filter(s => s.jenis_kelamin === 'Perempuan').length;
+            const jumlahPerempuan = totalData - jumlahLaki;
 
             rekapJumlahList.innerHTML = `
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Total Siswa <span class="badge bg-primary rounded-pill">${totalSiswa}</span>
+                    Total Data <span class="badge bg-primary rounded-pill">${totalData}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Siswa Aktif <span class="badge bg-success rounded-pill">${siswaAktif}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Siswa Lulus <span class="badge bg-secondary rounded-pill">${siswaLulus}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     Laki-laki <span class="badge bg-info rounded-pill">${jumlahLaki}</span>
