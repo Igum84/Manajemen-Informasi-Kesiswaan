@@ -64,26 +64,118 @@
 
         /* --- Gaya Spesifik untuk Bar Chart --- */
         .page-title { font-size: 2rem; font-weight: 600; text-shadow: 1px 1px 2px var(--shadow-dark), -1px -1px 2px var(--shadow-light); margin-bottom: 2rem !important; text-align: center; }
-        .chart-wrap { background-color: var(--bg-color); border: none; border-radius: var(--widget-radius); box-shadow: var(--protruding-shadow); padding: 2rem; }
-        .chart-title { text-align: center; margin-bottom: 20px; font-size: 1.5rem; font-weight: 500; }
+        /* PERUBAHAN: Mengubah latar belakang container grafik menjadi gelap */
+        .chart-wrap { 
+            background-color: var(--dark-text); /* Menggunakan warna teks gelap sebagai latar */
+            color: var(--bg-color); /* Mengubah warna teks default di dalamnya menjadi terang */
+            border: none; 
+            border-radius: var(--widget-radius); 
+            box-shadow: var(--protruding-shadow); 
+            padding: 2rem; 
+        }
+        .chart-title { text-align: center; margin-bottom: 20px; font-size: 1.5rem; font-weight: 500; color: var(--bg-color); /* Pastikan judul juga terang */ }
         
         /* PERUBAHAN: Kontainer utama untuk chart dan sumbu Y */
-        .chart-container { display: flex; align-items: flex-end; }
+        .chart-container { 
+            display: flex; 
+            align-items: flex-end; 
+            position: relative; /* Diperlukan untuk lapisan SVG */
+        }
+
+        /* PERUBAHAN: Lapisan SVG untuk garis */
+        .chart-line-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Penting agar tidak menghalangi tooltip */
+        }
+        .chart-line-svg .line {
+            stroke: #88aaff; /* Warna garis */
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round; /* Ujung garis membulat */
+        }
+        .chart-line-svg .dot {
+            fill: #ffffff; /* Warna titik */
+            stroke: #3b82f6; /* Warna pinggiran titik */
+            stroke-width: 2;
+        }
+
+        /* PERUBAHAN: Judul Sumbu Y (vertikal) */
+        .y-axis-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px; /* Lebar untuk area judul */
+            writing-mode: vertical-rl; /* Membuat teks vertikal */
+            transform: rotate(180deg); /* Memutar teks agar bisa dibaca dari bawah ke atas */
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--bg-color); /* PERUBAHAN: Warna teks terang */
+            margin-right: 15px; /* Jarak antara judul dan label sumbu Y */
+            height: 340px; /* Samakan dengan tinggi chart */
+            padding-bottom: 30px; /* Samakan dengan padding chart */
+            text-align: center;
+            flex-shrink: 0;
+        }
 
         /* PERUBAHAN: Sumbu Y (label vertikal) */
         .y-axis {
             display: flex;
-            flex-direction: column;
+            flex-direction: column-reverse; /* Balik urutan agar 0 di bawah */
             justify-content: space-between;
             width: 40px; /* Lebar untuk sumbu Y */
             height: 340px; /* Samakan dengan tinggi .custom-chart */
             padding-bottom: 30px; /* Samakan dengan padding bawah chart */
             text-align: right;
-            font-size: 12px;
-            color: #6b7280;
+            font-size: 12px; 
+            color: #bdc5d1; /* PERUBAHAN: Warna teks sumbu Y sedikit lebih redup */
             flex-shrink: 0; /* Mencegah sumbu Y menyusut */
         }
 
+        /* PERUBAHAN: Judul Sumbu X (horizontal) */
+        .x-axis-title {
+            text-align: center;
+            margin-top: 5px; /* Jarak dari label tahun */
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--bg-color); /* PERUBAHAN: Warna teks terang */
+        }
+
+        .custom-chart { display: flex; align-items: flex-end; justify-content: space-around; gap: 24px; height: 340px; position: relative; padding-bottom: 30px; overflow-x: auto; padding-left: 10px; padding-right: 10px; flex-grow: 1; /* Biarkan chart mengisi sisa ruang */ }
+        .custom-chart::before { content: ""; position: absolute; left: 0; right: 0; bottom: 30px; height: 2px; background: #9ca3af; opacity: 0.3; z-index: 1; }
+        .bar-item { display: flex; flex-direction: column; align-items: center; width: 56px; min-width: 40px; position: relative; z-index: 2; }
+        .bar-item .value { font-size: 13px; margin-bottom: 8px; color: var(--bg-color); font-weight: 600; min-height: 18px; }
+        .bar-item .bar { width: 100%; border-radius: 6px 6px 3px 3px; background: linear-gradient(to top, #dc3545, #ffc107, #198754); box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); transition: 0.25s ease; }
+        .bar-item .bar:hover { transform: translateY(-5px) scale(1.04); }
+        /* PERBAIKAN: Posisikan label tahun di luar area chart */
+        .bar-item .label { 
+            position: absolute;
+            bottom: -25px; /* PERBAIKAN: Beri nilai negatif untuk mendorong label ke bawah garis */
+            font-size: 13px; 
+            color: #374151; 
+            font-weight: 600;
+        }
+    </style>
+    <style>
+        /* PERUBAHAN: Menambahkan gaya untuk tombol aksi agar konsisten */
+        .action-buttons .btn {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--protruding-shadow);
+            background-color: var(--bg-color);
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: box-shadow 0.2s ease;
+            padding: 0.6rem 1.5rem;
+        }
+        .action-buttons .btn:hover {
+            box-shadow: var(--inset-shadow);
+        }
+    </style>
+    <style>
         /* PERUBAHAN: Gaya untuk garis grid horizontal */
         .grid-line {
             position: absolute;
@@ -94,15 +186,6 @@
             z-index: 1; /* Pastikan garis berada di belakang batang diagram */
         }
 
-        .custom-chart { display: flex; align-items: flex-end; justify-content: space-around; gap: 24px; height: 340px; position: relative; padding-bottom: 30px; overflow-x: auto; padding-left: 10px; padding-right: 10px; flex-grow: 1; /* Biarkan chart mengisi sisa ruang */ }
-        .custom-chart::before { content: ""; position: absolute; left: 0; right: 0; bottom: 30px; height: 2px; background: #9ca3af; opacity: 0.3; z-index: 1; }
-        .bar-item { display: flex; flex-direction: column; align-items: center; width: 56px; min-width: 40px; position: relative; z-index: 2; }
-        .bar-item .value { font-size: 13px; margin-bottom: 8px; color: #1f2937; font-weight: 600; min-height: 18px; }
-        .bar-item .bar { width: 100%; border-radius: 6px 6px 3px 3px; background: linear-gradient(145deg, #3b82f6, #1e3a8a); box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); transition: 0.25s ease; }
-        .bar-item .bar:hover { transform: translateY(-5px) scale(1.04); }
-        .bar-item .label { margin-top: 10px; font-size: 13px; color: #374151; font-weight: 600; text-align: center; }
-    </style>
-    <style>
         /* --- PERUBAHAN: Gaya untuk Tooltip Kustom --- */
         .custom-tooltip {
             position: absolute;
@@ -113,8 +196,9 @@
             border-radius: 8px;
             font-size: 13px;
             font-weight: 500;
-            white-space: nowrap;
-            z-index: 10;
+            white-space: normal; /* PERBAIKAN: Mengaktifkan kembali multiline */
+            max-width: 250px; /* PERBAIKAN: Batasi lebar tooltip agar teks bisa turun */
+            z-index: 999; /* PERBAIKAN: Pastikan tooltip berada di lapisan paling atas */
             box-shadow: var(--protruding-shadow);
             pointer-events: none; /* Penting agar tooltip tidak mengganggu event mouse pada bar */
         }
@@ -179,9 +263,18 @@
             <h2 class="chart-title">Jumlah Siswa per Tahun</h2>
             <!-- PERUBAHAN: Menambahkan kontainer flex untuk sumbu Y dan chart -->
             <div class="chart-container">
+                <div class="y-axis-title">Siswa</div>
                 <div class="y-axis" id="y-axis"></div>
+                <!-- PERUBAHAN: Tambahkan SVG untuk garis di sini -->
+                <svg class="chart-line-svg" id="chart-line-svg"></svg>
                 <div class="custom-chart" id="chart"></div>
             </div>
+            <!-- PERUBAHAN: Menambahkan judul untuk sumbu X -->
+            <div class="x-axis-title">Tahun Masuk</div>
+        </div>
+        <!-- PERUBAHAN: Tombol Kembali dipindahkan ke luar container grafik -->
+        <div class="text-center mt-4 action-buttons">
+            <a href="datasiswa.html" class="btn"><i class="fas fa-arrow-left me-2"></i>Kembali ke Data Siswa</a>
         </div>
     </main>
 
@@ -231,28 +324,23 @@
                 }, {});
             };
 
-            // --- FUNGSI BARU UNTUK MEMBUAT SUMBU Y ---
-            function renderYAxis(containerId, maxValue) {
+            // --- FUNGSI BARU UNTUK MEMBUAT SUMBU Y DAN GARIS GRID ---
+            function renderYAxis(yAxisMax) { // Terima yAxisMax sebagai parameter
                 const axisContainer = document.getElementById('y-axis');
-                const chartContainer = document.getElementById('chart'); // Wadah untuk garis grid
-                if (!axisContainer) return;
-                axisContainer.innerHTML = ''; // Kosongkan sumbu
-                chartContainer.querySelectorAll('.grid-line').forEach(line => line.remove()); // Hapus garis grid lama
+                const chartContainer = document.getElementById('chart');
+                if (!axisContainer || !chartContainer) return;
+                axisContainer.innerHTML = '';
+                chartContainer.querySelectorAll('.grid-line').forEach(line => line.remove());
 
-                const yAxisMax = Math.max(100, Math.ceil(maxValue / 20) * 20); // Pastikan sumbu Y minimal sampai 100
-                const increments = 5; // Jumlah interval (100/20 = 5)
-                const chartHeight = 280; // Tinggi area chart yang digunakan untuk batang
+                const increments = 4; // Jumlah interval (80 / 20 = 4)
+                const chartHeight = 280;
 
-                for (let i = increments; i >= 0; i--) {
+                for (let i = 0; i <= increments; i++) {
                     const labelValue = (yAxisMax / increments) * i;
                     axisContainer.innerHTML += `<span>${labelValue}</span>`;
-
-                    // --- PERUBAHAN: Tambahkan garis grid horizontal ---
                     const gridLine = document.createElement('div');
                     gridLine.className = 'grid-line';
-                    // Hitung posisi 'bottom' berdasarkan persentase tinggi
-                    const bottomPosition = (labelValue / yAxisMax) * chartHeight + 30; // +30 untuk padding bawah
-                    gridLine.style.bottom = `${bottomPosition}px`;
+                    gridLine.style.bottom = `${(labelValue / yAxisMax) * chartHeight + 30}px`; // Posisi garis disesuaikan
                     chartContainer.appendChild(gridLine);
                 }
             }
@@ -262,6 +350,7 @@
                 const chartContainer = document.getElementById(containerId);
                 if (!chartContainer) return;
 
+                document.getElementById('chart-line-svg').innerHTML = ''; // Kosongkan juga SVG
                 chartContainer.innerHTML = ''; // Kosongkan chart sebelum render ulang
 
                 const labels = Object.keys(data).filter(k => k !== 'Tidak Diisi' && k !== 'null').sort((a, b) => a - b);
@@ -271,14 +360,17 @@
                 }
 
                 const values = labels.map(label => data[label]);
-                const maxJumlah = Math.max(...values, 1); // Hindari pembagian dengan nol
+                const maxDataValue = Math.max(...values, 1); // Nilai tertinggi dari data aktual
 
                 // Render sumbu Y berdasarkan nilai maksimum
-                renderYAxis('y-axis', maxJumlah);
-                
-                const chartHeight = 280; // Tinggi maksimal yang bisa digunakan oleh batang
+                const yAxisMax = 80; // Skala maksimum yang kita tetapkan untuk sumbu Y
+                renderYAxis(yAxisMax);
 
-                labels.forEach(label => {
+                const linePoints = []; // Array untuk menyimpan koordinat garis
+                
+                const chartHeight = 280; // Tinggi area chart dalam piksel
+
+                labels.forEach((label, index) => {
                     const jumlah = data[label];
                     const itemWrap = document.createElement('div');
                     itemWrap.className = 'bar-item';
@@ -289,22 +381,36 @@
 
                     const barDiv = document.createElement('div');
                     barDiv.className = 'bar';
-                    const height = (jumlah / maxJumlah) * chartHeight;
+                    // PERBAIKAN: Hitung tinggi batang berdasarkan skala sumbu Y (yAxisMax), bukan maxDataValue
+                    const height = (jumlah / yAxisMax) * chartHeight;
                     barDiv.style.height = height + 'px';
 
-                    // --- PERUBAHAN: Tambahkan event listener untuk tooltip kustom ---
+                    // --- PERBAIKAN: Tambahkan kembali event listener untuk tooltip kustom ---
                     barDiv.addEventListener('mouseover', () => {
-                        tooltip.textContent = `Tahun ${label}: ${jumlah} siswa`;
+                        let tooltipText = `Tahun ${label}: Jumlah siswa masuk sebanyak ${jumlah}`;
+
+                        // Logika perbandingan dengan tahun sebelumnya
+                        if (index > 0) { // Pastikan ini bukan tahun pertama
+                            const tahunSebelumnya = labels[index - 1];
+                            const jumlahSebelumnya = data[tahunSebelumnya];
+
+                            if (jumlah < jumlahSebelumnya) {
+                                const selisih = jumlahSebelumnya - jumlah;
+                                const persentase = (selisih / jumlahSebelumnya) * 100;
+                                tooltipText += `<br><small style="color: #ffc107;">Terjadi penurunan dari tahun sebelumnya sebanyak ${persentase.toFixed(1)}%</small>`;
+                            } else if (jumlah > jumlahSebelumnya) {
+                                // --- PERUBAHAN: Logika untuk kenaikan ---
+                                const selisih = jumlah - jumlahSebelumnya;
+                                const persentase = (selisih / jumlahSebelumnya) * 100;
+                                tooltipText += `<br><small style="color: #198754;">Terjadi kenaikan dari tahun sebelumnya sebanyak ${persentase.toFixed(1)}%</small>`;
+                            }
+                        }
+
+                        tooltip.innerHTML = tooltipText;
                         tooltip.style.display = 'block';
                     });
-                    barDiv.addEventListener('mousemove', (e) => {
-                        // Posisikan tooltip sedikit di atas dan di kanan kursor
-                        tooltip.style.left = (e.pageX + 15) + 'px';
-                        tooltip.style.top = (e.pageY + 15) + 'px';
-                    });
-                    barDiv.addEventListener('mouseout', () => {
-                        tooltip.style.display = 'none';
-                    });
+                    barDiv.addEventListener('mousemove', (e) => { tooltip.style.left = (e.pageX + 15) + 'px'; tooltip.style.top = (e.pageY + 15) + 'px'; });
+                    barDiv.addEventListener('mouseout', () => { tooltip.style.display = 'none'; });
 
                     const labelDiv = document.createElement('div');
                     labelDiv.className = 'label';
@@ -314,6 +420,34 @@
                     itemWrap.appendChild(barDiv);
                     itemWrap.appendChild(labelDiv);
                     chartContainer.appendChild(itemWrap);
+
+                    // --- PERBAIKAN: Simpan koordinat untuk garis ---
+                    // Dapatkan posisi X relatif terhadap container chart
+                    const x = barDiv.parentElement.offsetLeft + (barDiv.offsetWidth / 2);
+                    
+                    // Dapatkan posisi Y dari puncak batang diagram
+                    // PERBAIKAN: Hitung posisi Y dengan memperhitungkan tinggi angka di atasnya
+                    const valueHeight = barDiv.previousElementSibling.offsetHeight; // Tinggi elemen .value
+                    const valueMargin = 8; // margin-bottom dari .value
+                    const y = chartContainer.clientHeight - height - 30 - valueHeight - valueMargin; // 30 adalah padding-bottom
+
+                    linePoints.push({x, y});
+                });
+
+                // --- PERUBAHAN: Gambar garis dan titik setelah semua bar dibuat ---
+                const svg = document.getElementById('chart-line-svg');
+                const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                polyline.setAttribute('class', 'line');
+                polyline.setAttribute('points', linePoints.map(p => `${p.x},${p.y}`).join(' '));
+                svg.appendChild(polyline);
+
+                linePoints.forEach(p => {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('class', 'dot');
+                    circle.setAttribute('cx', p.x);
+                    circle.setAttribute('cy', p.y);
+                    circle.setAttribute('r', 5); // Radius titik
+                    svg.appendChild(circle);
                 });
             }
 
@@ -323,19 +457,6 @@
                 const siswaData = JSON.parse(siswaDataString);
                 const tahunMasukData = countFrequency(siswaData, 'tahun_masuk');
                 renderCustomBarChart('chart', tahunMasukData);
-
-                // --- PERUBAHAN: Tambahkan listener untuk update real-time ---
-                window.addEventListener('storage', (event) => {
-                    // Cek apakah item yang berubah adalah 'siswaData'
-                    if (event.key === 'siswaData') {
-                        console.log('Data siswa di sessionStorage diperbarui. Merender ulang grafik...');
-                        const newData = JSON.parse(event.newValue);
-                        const newTahunMasukData = countFrequency(newData, 'tahun_masuk');
-                        renderCustomBarChart('chart', newTahunMasukData);
-                    }
-                });
-                // --- AKHIR PERUBAHAN ---
-
             } else {
                 // Tampilkan pesan jika tidak ada data
                 const chartContainer = document.getElementById('chart');
