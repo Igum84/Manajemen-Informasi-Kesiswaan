@@ -16,6 +16,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Tom Select CSS (untuk dropdown yang bisa dicari) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.css" rel="stylesheet">
+
     <!-- Custom CSS (disalin dari halaman lain untuk konsistensi) -->
     <style>
         /* Variabel Warna */
@@ -262,7 +265,10 @@
             max-height: 65vh;
             overflow-y: auto;
         }
-        .modal-body .form-control, .modal-body .form-select { background-color: var(--bg-color); border: none; border-radius: 10px; box-shadow: var(--inset-shadow); color: var(--dark-text); }
+        .modal-body .form-control, .modal-body .form-select, .ts-control { 
+            background-color: var(--bg-color) !important; border: none !important; border-radius: 10px !important; box-shadow: var(--inset-shadow) !important; color: var(--dark-text) !important; 
+        }
+
         .modal-footer .btn {
             border: none;
             border-radius: 10px;
@@ -491,7 +497,9 @@
                                 <h6 class="mb-3 text-primary">Data Siswa</h6>
                                 <div class="mb-3">
                                     <label for="nama_siswa" class="form-label">Nama Siswa</label>
-                                    <input type="text" class="form-control" id="nama_siswa" required>
+                                    <select id="nama_siswa" placeholder="Cari atau pilih nama siswa..." autocomplete="off" required>
+                                        <option value="">Memuat daftar siswa...</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="nisn" class="form-label">NISN</label>
@@ -591,6 +599,9 @@
     <!-- SheetJS (XLSX) Library for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
+    <!-- Tom Select JS (untuk dropdown yang bisa dicari) -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -603,6 +614,34 @@
         let currentData = [];
 
         // --- Fungsi Spesifik Halaman ---
+
+        // Fungsi BARU untuk memuat daftar siswa ke dropdown
+        async function loadSiswaListToDropdown() {
+            try {
+                // PERBAIKAN: Mengambil data langsung dari Supabase dengan urutan yang benar.
+                const { data, error } = await supabaseClient
+                    .from('tabelsiswa')
+                    .select('nama_siswa, nisn') // Ambil nama dan NISN
+                    .order('nama_siswa', { ascending: true });
+
+                if (error) throw error;
+
+                const tomSelect = document.getElementById('nama_siswa').tomselect;
+                if (!tomSelect) return;
+
+                tomSelect.clearOptions(); // Hapus opsi lama
+                data.forEach(siswa => { // Gunakan 'data' langsung dari Supabase
+                    tomSelect.addOption({
+                        value: siswa.nama_siswa, text: siswa.nama_siswa,
+                        'data-nisn': siswa.nisn || '' // Simpan NISN di sini
+                    });
+                });
+                tomSelect.refreshOptions(false); // Refresh tanpa membuka dropdown
+
+            } catch (error) {
+                console.error('Gagal memuat daftar siswa:', error.message);
+            }
+        }
 
         async function populateDropdowns() {
             const kelasSelect = document.getElementById('kelas');
@@ -743,6 +782,15 @@
                 document.getElementById('btn-delete-data').classList.add('d-none');
                 document.getElementById('current-photo-link').innerHTML = '';
                 document.getElementById('data-id').value = '';
+
+                // Reset dan aktifkan kembali TomSelect
+                const tomSelect = document.getElementById('nama_siswa').tomselect;
+                if (tomSelect) {
+                    tomSelect.clear();
+                    tomSelect.enable();
+                }
+                // Reset field lain yang terisi otomatis
+                document.getElementById('nisn').value = '';
             }
         });
 
@@ -817,8 +865,19 @@
                     return;
                 }
 
+                const tomSelect = document.getElementById('nama_siswa').tomselect;
+
+                // Cek apakah nama siswa sudah ada di dropdown. Jika tidak, tambahkan.
+                if (!tomSelect.getOption(data.nama_siswa)) {
+                    tomSelect.addOption({
+                        value: data.nama_siswa,
+                        text: data.nama_siswa,
+                        'data-nisn': data.nisn || '',
+                        'data-kelas': data.kelas || ''
+                    });
+                }
+
                 document.getElementById('data-id').value = data.id;
-                document.getElementById('nama_siswa').value = data.nama_siswa;
                 document.getElementById('nisn').value = data.nisn || '';
                 document.getElementById('kelas').value = data.kelas || '';
                 document.getElementById('jurusan').value = data.jurusan || '';
@@ -829,6 +888,9 @@
                 document.getElementById('rekomendasi').value = data.rekomendasi || '';
                 document.getElementById('mengetahui_walikelas').value = data.walikelas || '';
 
+                // HAPUS baris yang konflik dan gunakan cara yang benar untuk set nilai TomSelect
+                tomSelect.setValue(data.nama_siswa, true); // Argumen 'true' untuk tidak memicu event 'change'
+
                 const currentPhotoLink = document.getElementById('current-photo-link');
                 currentPhotoLink.innerHTML = data.photo_kegiatan ? `Foto saat ini: <a href="${data.photo_kegiatan}" target="_blank">Lihat Foto</a>` : '<em>Tidak ada foto terlampir.</em>';
 
@@ -836,6 +898,9 @@
                 document.getElementById('btn-konfirmasi-data').classList.add('d-none');
                 document.getElementById('btn-update-data').classList.remove('d-none');
                 document.getElementById('btn-delete-data').classList.remove('d-none');
+
+                // Nonaktifkan dropdown nama siswa saat mode edit
+                if (tomSelect) tomSelect.disable();
 
                 dataModal.show();
             }
@@ -935,6 +1000,23 @@
             populateLoginUsernames();
             populateDropdowns();
             loadData();
+
+            // Inisialisasi TomSelect SETELAH halaman dimuat
+            const tomSelectInstance = new TomSelect('#nama_siswa', {
+                create: false, // Mencegah pengguna menambahkan nama baru
+                sortField: { field: "text", direction: "asc" }
+            });
+
+            // Muat data siswa ke dalam TomSelect
+            loadSiswaListToDropdown();
+
+            // Tambahkan event listener untuk mengisi field lain secara otomatis
+            tomSelectInstance.on('change', (value) => {
+                if (!value) return;
+                const selectedOption = tomSelectInstance.getOption(value);
+                document.getElementById('nisn').value = selectedOption['data-nisn'] || '';
+                //document.getElementById('kelas').value = selectedOption['data-kelas'] || ''; // HANYA ISI NISN DAN KELAS
+            });
 
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
