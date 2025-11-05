@@ -383,30 +383,34 @@
             </div>
             <div class="card-body">
                 <div class="row g-4" id="rekap-container">
-                    <!-- Rekap Jumlah -->
+                    <!-- Baris 1 -->
                     <div class="col-lg-4 col-md-6">
                         <h6><i class="fas fa-users me-2 text-primary"></i>Jumlah Siswa</h6>
                         <ul class="list-group" id="rekap-jumlah-list">
                             <li class="list-group-item d-flex justify-content-between align-items-center">Memuat...</li>
                         </ul>
                     </div>
-                    <!-- Rekap Agama -->
                     <div class="col-lg-4 col-md-6">
                         <h6><i class="fas fa-place-of-worship me-2 text-success"></i>Berdasarkan Agama</h6>
                         <ul class="list-group" id="rekap-agama-list"></ul>
                     </div>
-                    <!-- Rekap Kelas -->
                     <div class="col-lg-4 col-md-6">
                         <h6><i class="fas fa-chalkboard-teacher me-2 text-info"></i>Berdasarkan Kelas</h6>
                         <ul class="list-group" id="rekap-kelas-list"></ul>
                     </div>
-                    <!-- Rekap Pekerjaan Ayah -->
-                    <div class="col-lg-6 col-md-6 pt-3">
+                    <!-- Baris 2 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-2 action-buttons">
+                            <h6><i class="fas fa-calendar-alt me-2 text-secondary"></i>Berdasarkan Tahun Masuk</h6>
+                            <a href="barchart.html" class="btn btn-sm" title="Lihat Grafik"><i class="fas fa-chart-bar"></i></a>
+                        </div>
+                        <ul class="list-group" id="rekap-tahun-masuk-list"></ul>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
                         <h6><i class="fas fa-briefcase me-2 text-warning"></i>Berdasarkan Pekerjaan Ayah</h6>
                         <ul class="list-group" id="rekap-pekerjaan-ayah-list"></ul>
                     </div>
-                    <!-- Rekap Pekerjaan Ibu -->
-                    <div class="col-lg-6 col-md-6 pt-3 pt-lg-3">
+                    <div class="col-lg-4 col-md-6">
                         <h6><i class="fas fa-briefcase me-2 text-danger"></i>Berdasarkan Pekerjaan Ibu</h6>
                         <ul class="list-group" id="rekap-pekerjaan-ibu-list"></ul>
                     </div>
@@ -454,6 +458,7 @@
                                 <th scope="col">Pekerjaan</th>
                                 <th scope="col">Penghasilan</th>
                                 <th scope="col">Kelas Saat Ini</th>
+                                <th scope="col">Tahun Masuk</th>
                                 <th scope="col" class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -617,6 +622,10 @@
                                         <label for="kelas" class="form-label">Kelas Saat Ini</label>
                                         <select class="form-select" id="kelas"></select>
                                     </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="tahun_masuk" class="form-label">Tahun Masuk</label>
+                                        <input type="number" class="form-control" id="tahun_masuk" placeholder="Contoh: 2023">
+                                    </div>
                                 </div>
                             </div>
                             <!-- Kolom Kanan -->
@@ -736,6 +745,17 @@
         // Variabel global untuk menyimpan data siswa yang sedang ditampilkan
         let currentSiswaData = [];
 
+        // Fungsi untuk menyimpan data siswa ke sessionStorage
+        function simpanDataSiswaKeSessionStorage(dataSiswa) {
+            try {
+                const siswaDataString = JSON.stringify(dataSiswa);
+                sessionStorage.setItem('siswaData', siswaDataString);
+                console.log('Data siswa berhasil disimpan di sessionStorage.');
+            } catch (error) {
+                console.error('Gagal menyimpan data siswa ke sessionStorage:', error);
+            }
+        }
+
         // Fungsi untuk memuat data siswa ke tabel utama
         async function loadSiswa(searchTerm = '') {
             siswaTableBody.innerHTML = `<tr><td colspan="20" class="text-center">Memuat data siswa...</td></tr>`;
@@ -772,6 +792,9 @@
             // Panggil fungsi untuk update rekap data dengan data yang baru diambil
             updateRekapData(data);
 
+            // Setelah data berhasil dimuat, simpan ke sessionStorage
+            simpanDataSiswaKeSessionStorage(data);
+
             if (data.length === 0) {
                 siswaTableBody.innerHTML = `<tr><td colspan="20" class="text-center">Belum ada data siswa.</td></tr>`;
                 return;
@@ -800,6 +823,7 @@
                         <td>${siswa.pekerjaan_ibu || '-'}</td>
                         <td>${siswa.penghasilan_ibu || '-'}</td>
                         <td>${siswa.kelas || '-'}</td>
+                        <td>${siswa.tahun_masuk || '-'}</td>
                         <td class="text-center action-buttons">
                             <button class="btn btn-sm btn-info btn-detail" data-id="${siswa.id}">Klik Me</button>
                         </td>
@@ -816,6 +840,7 @@
             const rekapPekerjaanAyahList = document.getElementById('rekap-pekerjaan-ayah-list');
             const rekapKelasList = document.getElementById('rekap-kelas-list');
             const rekapPekerjaanIbuList = document.getElementById('rekap-pekerjaan-ibu-list');
+            const rekapTahunMasukList = document.getElementById('rekap-tahun-masuk-list');
 
             // Definisikan kategori master sesuai dropdown
             const AGAMA_CATEGORIES = ['Islam', 'Kristen Katholik', 'Kristen Protestan', 'Hindu', 'Budha', 'Kong Fu Chu'];
@@ -832,6 +857,7 @@
             };
             const PEKERJAAN_COLORS = { 'ASN': 'bg-primary', 'Petani': 'bg-success', 'Nelayan': 'bg-info text-dark', 'Pegawai Swasta': 'bg-dark', 'Buruh Harian': 'bg-secondary', 'Wiraswasta': 'bg-warning text-dark', 'Ibu Rumah Tangga': 'bg-danger', 'Tidak Bekerja': 'bg-light text-dark' };
             const KELAS_COLORS = ['bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning text-dark', 'bg-info text-dark', 'bg-dark'];
+            const TAHUN_COLORS = ['bg-secondary', 'bg-dark', 'bg-primary', 'bg-success', 'bg-info text-dark'];
 
 
             // Kosongkan kontainer rekap
@@ -840,6 +866,7 @@
             rekapPekerjaanAyahList.innerHTML = '';
             rekapKelasList.innerHTML = '';
             rekapPekerjaanIbuList.innerHTML = '';
+            rekapTahunMasukList.innerHTML = '';
 
             if (siswaData.length === 0) {
                 rekapJumlahList.innerHTML = '<li class="list-group-item">Tidak ada data</li>';
@@ -905,6 +932,50 @@
             renderMasterList(rekapPekerjaanAyahList, countFrequency(siswaData, 'pekerjaan_ayah'), PEKERJAAN_CATEGORIES, PEKERJAAN_COLORS);
             renderMasterList(rekapPekerjaanIbuList, countFrequency(siswaData, 'pekerjaan_ibu'), PEKERJAAN_CATEGORIES, PEKERJAAN_COLORS);
             renderDynamicList(rekapKelasList, countFrequency(siswaData, 'kelas'), KELAS_COLORS); // Kelas tetap dinamis
+            renderDynamicList(rekapTahunMasukList, countFrequency(siswaData, 'tahun_masuk'), TAHUN_COLORS);
+        }
+
+        // Fungsi BARU untuk membuat diagram batang kustom di dalam modal
+        function renderCustomBarChart(containerId, data) {
+            const chartContainer = document.getElementById(containerId);
+            if (!chartContainer) return;
+
+            chartContainer.innerHTML = ''; // Kosongkan chart sebelum render ulang
+
+            const labels = Object.keys(data).filter(k => k !== 'Tidak Diisi').sort((a, b) => a - b);
+            if (labels.length === 0) {
+                chartContainer.innerHTML = '<p class="text-center text-muted mt-4">Tidak ada data untuk ditampilkan di grafik.</p>';
+                return;
+            }
+
+            const values = labels.map(label => data[label]);
+            const maxJumlah = Math.max(...values, 1); // Hindari pembagian dengan nol
+            const chartHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--chart-height')) || 280;
+
+            labels.forEach(label => {
+                const jumlah = data[label];
+                const itemWrap = document.createElement('div');
+                itemWrap.className = 'bar-item';
+
+                const valueDiv = document.createElement('div');
+                valueDiv.className = 'value';
+                valueDiv.textContent = jumlah;
+
+                const barDiv = document.createElement('div');
+                barDiv.className = 'bar';
+                barDiv.title = `Tahun ${label} — ${jumlah} siswa`;
+                const height = (jumlah / maxJumlah) * chartHeight;
+                barDiv.style.height = height + 'px';
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'label';
+                labelDiv.textContent = label;
+
+                itemWrap.appendChild(valueDiv);
+                itemWrap.appendChild(barDiv);
+                itemWrap.appendChild(labelDiv);
+                chartContainer.appendChild(itemWrap);
+            });
         }
 
         // Fungsi untuk mengisi dropdown kelas di modal
@@ -982,18 +1053,6 @@
             btnKonfirmasi.innerHTML = 'Konfirmasi';
         });
 
-        // Event listener untuk membersihkan modal saat dibuka untuk menambah data
-        document.getElementById('siswaModal').addEventListener('show.bs.modal', () => {
-            // Cek apakah modal dibuka oleh tombol 'Tambah'
-            if (!document.getElementById('siswa-id').value) {
-                formSiswa.reset();
-                document.getElementById('siswaModalLabel').textContent = 'Tambah Data Siswa Baru';
-                document.getElementById('btn-konfirmasi-siswa').classList.remove('d-none');
-                document.getElementById('btn-update-siswa').classList.add('d-none');
-                document.getElementById('btn-delete-siswa').classList.add('d-none');
-            }
-        });
-
         // Event listener untuk membersihkan ID saat modal ditutup
         document.getElementById('siswaModal').addEventListener('hidden.bs.modal', () => {
             document.getElementById('siswa-id').value = '';
@@ -1041,6 +1100,7 @@
                 document.getElementById('pekerjaan_ibu').value = data.pekerjaan_ibu;
                 document.getElementById('penghasilan_ibu').value = data.penghasilan_ibu;
                 document.getElementById('kelas').value = data.kelas;
+                document.getElementById('tahun_masuk').value = data.tahun_masuk || ''; // Baris ini sekarang akan berfungsi
 
                 // --- LOGIKA KONTROL AKSES TOMBOL ---
                 const loggedInUserJSON = sessionStorage.getItem('loggedInUser');
@@ -1092,6 +1152,7 @@
                 pekerjaan_ibu: document.getElementById('pekerjaan_ibu').value,
                 penghasilan_ibu: document.getElementById('penghasilan_ibu').value,
                 kelas: document.getElementById('kelas').value,
+                tahun_masuk: document.getElementById('tahun_masuk').value || null,
             };
 
             const { error } = await supabaseClient.from('tabelsiswa').update(updatedData).eq('id', siswaId);
@@ -1409,6 +1470,7 @@
             loadSiswa();
             populateKelasDropdown();
             handleEnterAsTab(formSiswa); // Terapkan fungsi Enter as Tab ke form siswa
+
         });
 
         // --- LOGIKA BARU UNTUK TOMBOL TAMBAH DATA ---
@@ -1434,17 +1496,15 @@
         });
     </script>
     <script>
-        // Event listener untuk membersihkan form saat modal dibuka untuk menambah data
+        // PERBAIKAN: Menggabungkan semua listener untuk modal siswa di satu tempat
         document.getElementById('siswaModal').addEventListener('show.bs.modal', (event) => {
-            // Cek apakah modal dibuka oleh tombol 'Tambah' (bukan dari tombol 'Klik Me')
+            // Cek apakah modal dibuka oleh tombol 'Tambah Data'
             if (event.relatedTarget && event.relatedTarget.id === 'btn-tambah-siswa') {
                 document.getElementById('form-siswa').reset();
                 document.getElementById('siswaModalLabel').textContent = 'Tambah Data Siswa Baru';
                 document.getElementById('btn-konfirmasi-siswa').classList.remove('d-none');
                 document.getElementById('btn-update-siswa').classList.add('d-none');
                 document.getElementById('btn-delete-siswa').classList.add('d-none');
-                document.getElementById('btn-luluskan-siswa').classList.add('d-none');
-                document.getElementById('btn-luluskan-siswa').classList.add('d-none');
             }
         });
     </script>
